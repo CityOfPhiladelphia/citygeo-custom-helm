@@ -1,0 +1,40 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "citygeo-cnpg-cluster.fullname" . }}
+  labels:
+    {{- include "citygeo-cnpg-cluster.labels" . | nindent 4 }}
+spec:
+  # By default, just map the whole values.cluster onto here
+  {{- toYaml .Values.cluster | nindent 2 }}
+
+  # "Forced" configuration
+  # Barman Cloud plugin used for archiving / backups
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: {{ include "citygeo-cnpg-cluster.fullname" . }}
+  serviceAccountTemplate:
+    metadata:
+      annotations:
+        {{- toYaml .Values.serviceAccount.annotations | nindent 8}}
+  # Require pods to be on on-demand nodes,
+  # not on the same host node, and evenly
+  # spread across AZs
+  affinity:
+    nodeSelector:
+      karpenter.sh/capacity-type: on-demand
+      nodepool-category: static
+    podAntiAffinityType: required
+
+  topologySpreadConstraints:
+    - labelSelector:
+        matchLabels:
+          cnpg.io/cluster: {{ include "citygeo-cnpg-cluster.fullname" . }}
+          app.kubernetes.io/component: database
+      maxSkew: 1
+      minDomains: 3
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: DoNotSchedule

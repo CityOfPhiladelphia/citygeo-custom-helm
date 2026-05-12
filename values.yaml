@@ -1,0 +1,90 @@
+# Default values for citygeo-cnpg-cluster.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Annotations to add to the service account
+  annotations: {}
+
+cluster:
+  # Number of PostgreSQL pods
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.3-minimal-trixie
+  postgresql:
+    extensions: []
+    parameters:
+      # Set to roughly 1/4 of total memory
+      shared_buffers: "256MB"
+      max_wal_size: "5GB"
+      min_wal_size: "1GB"
+      checkpoint_timeout: "15min"
+      # lz4 is a very fast compression algorithm that
+      # reduces how much streaming data is sent across AZs.
+      # This is not the compression used for backups,
+      # just the compression used for streaming
+      wal_compression: "lz4"
+  resources:
+    requests:
+      memory: "1024Mi"
+      cpu: "100m"
+    limits:
+      memory: "1024Mi"
+  # Super User Access
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: ""
+  storage:
+    storageClass: ebs-sc
+    size: 20Gi
+  walStorage:
+    storageClass: ebs-sc
+    # Should be approximately 2.4x higher than max_wal_size
+    size: 12Gi
+  # DO NOT set these values as they are handled automatically by the chart
+  # serviceAccountTemplate
+  # plugins
+  # affinity
+  # topologySpreadConstraints
+
+database:
+  name: test
+  owner: postgres
+  # DO NOT set these values as they are handled automatically by the chart
+  # cluster
+
+objectStore:
+  # CHANGE THIS!
+  retentionPolicy: "10d"
+  configuration:
+    # CHANGE THIS!
+    destinationPath: "s3://update-me"
+    wal:
+      compression: zstd
+      maxParallel: 2
+    data:
+      compression: snappy
+      jobs: 2
+    s3Credentials:
+      inheritFromIAMRole: true
+  # Mostly likely don't need to change this
+  instanceSidecarConfiguration:
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 10m
+        memory: 256Mi
+
+scheduledBackup:
+  # Create immediate backup, highly recommended
+  immediate: true 
+  # Weekly backups may not seem like much, but combined with WAL archive is plenty
+  schedule: "0 0 0 * * 0"
+  # DO NOT set these values as they are handled automatically by the chart
+  # cluster
+  # method
+  # pluginConfiguration

@@ -1,0 +1,26 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "citygeo-cnpg-cluster.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: {{ include "citygeo-cnpg-cluster.fullname" . }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    - port: metrics
+      metricRelabelings:
+        # There are a lot of metrics produced by CNPG,
+        # so we are only taking a small subset of them.
+        - sourceLabels: [__name__]
+          regex: "up|scrape_.*|cnpg_collector_.*|cnpg_pg_database_size_bytes|cnpg_pg_replication_.*|cnpg_backends_total|cnpg_cache_.*|cnpg_last_update_timestamp|barman_cloud_.*"
+          action: keep
+        - targetLabel: cnpg_cluster
+          replacement: {{ include "citygeo-cnpg-cluster.fullname" . }}
+        # Manually drop the cluster label because we use cluster
+        # internally to refer to the EKS cluster
+        - regex: "cluster"
+          action: labeldrop
