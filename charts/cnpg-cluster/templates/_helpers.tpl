@@ -2,8 +2,12 @@
 Expand the name of the chart.
 */}}
 {{- define "cnpg-cluster.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- if .Values.nameOverride -}}
+{{- .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
 
 {{/*
 Create a default fully qualified app name.
