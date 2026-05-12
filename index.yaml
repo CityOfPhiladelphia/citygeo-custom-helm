@@ -14,6 +14,16 @@ entries:
   cnpg-cluster:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2026-05-12T17:12:57.52195594Z"
+    description: A Helm chart for Kubernetes
+    digest: 5067a9b4cc0c88a7b7877d680fecac4ff485539674edd0f023ae086d613ce4d7
+    name: cnpg-cluster
+    type: application
+    urls:
+    - https://github.com/CityOfPhiladelphia/citygeo-custom-helm/releases/download/cnpg-cluster-0.4.0/cnpg-cluster-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2026-05-12T15:55:34.528767657Z"
     description: A Helm chart for Kubernetes
     digest: 37be1e3dfcf904f721049c96a3f7196f42beb075daddb80663eb3b7a8d5fb9b4
@@ -52,4 +62,4 @@ entries:
     urls:
     - https://github.com/CityOfPhiladelphia/citygeo-custom-helm/releases/download/cnpg-cluster-0.3.0/cnpg-cluster-0.3.0.tgz
     version: 0.3.0
-generated: "2026-05-12T15:55:34.528781548Z"
+generated: "2026-05-12T17:12:57.521974057Z"
