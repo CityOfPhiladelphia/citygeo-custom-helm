@@ -3,7 +3,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Pooler
 metadata:
-  name: {{ include "cnpg-cluster.name" . }}
+  name: {{ include "cnpg-cluster.name" . }}-pooler
   labels:
     {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
