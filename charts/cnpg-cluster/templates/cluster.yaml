@@ -2,9 +2,9 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: {{ include "citygeo-cnpg-cluster.fullname" . }}
+  name: {{ include "cnpg-cluster.fullname" . }}
   labels:
-    {{- include "citygeo-cnpg-cluster.labels" . | nindent 4 }}
+    {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
   # By default, just map the whole values.cluster onto here
   {{- toYaml .Values.cluster | nindent 2 }}
@@ -15,7 +15,7 @@ spec:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
-        barmanObjectName: {{ include "citygeo-cnpg-cluster.fullname" . }}
+        barmanObjectName: {{ include "cnpg-cluster.fullname" . }}
   serviceAccountTemplate:
     metadata:
       annotations:
@@ -32,7 +32,7 @@ spec:
   topologySpreadConstraints:
     - labelSelector:
         matchLabels:
-          cnpg.io/cluster: {{ include "citygeo-cnpg-cluster.fullname" . }}
+          cnpg.io/cluster: {{ include "cnpg-cluster.fullname" . }}
           app.kubernetes.io/component: database
       maxSkew: 1
       minDomains: 3

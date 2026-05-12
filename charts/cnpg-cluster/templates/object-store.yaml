@@ -3,9 +3,9 @@
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
-  name: {{ include "citygeo-cnpg-cluster.fullname" . }}
+  name: {{ include "cnpg-cluster.fullname" . }}
   labels:
-    {{- include "citygeo-cnpg-cluster.labels" . | nindent 4 }}
+    {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
   # By default, just map the whole values.objectStore onto here
   {{- toYaml .Values.objectStore | nindent 2 }}

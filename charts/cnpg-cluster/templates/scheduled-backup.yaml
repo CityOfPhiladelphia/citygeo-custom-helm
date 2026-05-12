@@ -2,15 +2,15 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: {{ include "citygeo-cnpg-cluster.fullname" . }}
+  name: {{ include "cnpg-cluster.fullname" . }}
   labels:
-    {{- include "citygeo-cnpg-cluster.labels" . | nindent 4 }}
+    {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
   # By default, just map the whole values.scheduledBackup onto here
   {{- toYaml .Values.scheduledBackup | nindent 2 }}
   # Forced config
   cluster:
-    name: {{ include "citygeo-cnpg-cluster.fullname" . }}
+    name: {{ include "cnpg-cluster.fullname" . }}
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
