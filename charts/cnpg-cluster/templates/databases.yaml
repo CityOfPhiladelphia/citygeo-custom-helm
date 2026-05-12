@@ -11,7 +11,7 @@ spec:
   # By default, just map the whole values.databases[i] onto here
   {{- toYaml . | nindent 2 }}
   cluster:
-    name: {{ include "cnpg-cluster.name" . }}
+    name: {{ include "cnpg-cluster.name" $ }}
 ---
 {{- end}}
 {{- end}}
