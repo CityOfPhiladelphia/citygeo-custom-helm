@@ -1,4 +1,5 @@
 ---
+{{- if .Values.cluster.enabled }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -7,7 +8,7 @@ metadata:
     {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
   # By default, just map the whole values.cluster onto here
-  {{- toYaml .Values.cluster | nindent 2 }}
+  {{- toYaml .Values.cluster.spec | nindent 2 }}
 
   # "Forced" configuration
   # Barman Cloud plugin used for archiving / backups
@@ -38,3 +39,4 @@ spec:
       minDomains: 3
       topologyKey: topology.kubernetes.io/zone
       whenUnsatisfiable: DoNotSchedule
+{{- end }}

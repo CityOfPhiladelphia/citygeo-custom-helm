@@ -11,9 +11,9 @@ spec:
     name: {{ include "cnpg-cluster.name" . }}
   # Omit the template from the base here because
   # we need special config for it
-  {{- omit .Values.pooler "template" "enabled" | toYaml | nindent 2 }}
+  {{- omit .Values.pooler.spec "template" "enabled" | toYaml | nindent 2 }}
   template:
-    {{- toYaml .Values.pooler.template | nindent 4 }}
+    {{- toYaml .Values.pooler.spec.template | nindent 4 }}
     # Forced config
     nodeSelector:
       karpenter.sh/capacity-type: on-demand

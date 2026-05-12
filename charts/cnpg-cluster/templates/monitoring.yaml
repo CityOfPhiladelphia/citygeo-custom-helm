@@ -1,4 +1,5 @@
 ---
+{{- if .Values.monitoring.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -26,3 +27,4 @@ spec:
         # internally to refer to the EKS cluster
         - regex: "cluster"
           action: labeldrop
+{{- end }}
