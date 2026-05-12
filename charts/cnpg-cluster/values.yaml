@@ -50,11 +50,12 @@ cluster:
   # affinity
   # topologySpreadConstraints
 
-database:
-  name: test
-  owner: postgres
-  # DO NOT set these values as they are handled automatically by the chart
-  # cluster
+databases: []
+# databases:
+#   - name: test
+#   - owner: postgres
+#   # DO NOT set these values as they are handled automatically by the chart
+#   # cluster
 
 objectStore:
   # CHANGE THIS!
