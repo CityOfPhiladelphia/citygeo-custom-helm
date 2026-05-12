@@ -4,6 +4,8 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Database
 metadata:
   name: {{ include "citygeo-cnpg-cluster.fullname" . }}-{{ .Values.database.name }}
+  labels:
+    {{- include "citygeo-cnpg-cluster.labels" . | nindent 4 }}
 spec:
   # By default, just map the whole values.database onto here
   {{- toYaml .Values.database | nindent 2 }}
