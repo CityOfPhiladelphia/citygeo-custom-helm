@@ -41,11 +41,3 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "citygeo-cnpg-cluster.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "citygeo-cnpg-cluster.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
