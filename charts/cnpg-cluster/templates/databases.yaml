@@ -1,16 +1,18 @@
 ---
+{{- if .Values.databases }}
 {{- range .Values.databases }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Database
 metadata:
-  name: {{ include "cnpg-cluster.fullname" . }}-{{ .name }}
+  name: {{ include "cnpg-cluster.name" . }}-{{ .name }}
   labels:
     {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
   # By default, just map the whole values.databases[i] onto here
   {{- toYaml . | nindent 2 }}
   cluster:
-    name: {{ include "cnpg-cluster.fullname" . }}
+    name: {{ include "cnpg-cluster.name" . }}
 ---
+{{- end}}
 {{- end}}
 

@@ -1,0 +1,45 @@
+---
+{{- if .Values.pooler.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: {{ include "cnpg-cluster.name" . }}
+  labels:
+    {{- include "cnpg-cluster.labels" . | nindent 4 }}
+spec:
+  cluster:
+    name: {{ include "cnpg-cluster.name" . }}
+  # Omit the template from the base here because
+  # we need special config for it
+  {{- omit .Values.pooler "template" "enabled" | toYaml | nindent 2 }}
+  template:
+    {{- toYaml .Values.pooler.template | nindent 4 }}
+    # Forced config
+    nodeSelector:
+      karpenter.sh/capacity-type: on-demand
+      nodepool-category: static
+    # Spread across AZ and nodes
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: cnpg.io/cluster
+                  operator: In
+                  values:
+                    - {{ include "cnpg-cluster.name" . }}
+                - key: app.kubernetes.io/component
+                  operator: In
+                  values:
+                    - pooler
+            topologyKey: "kubernetes.io/hostname"
+    topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            cnpg.io/cluster: {{ include "cnpg-cluster.name" . }}
+            app.kubernetes.io/component: pooler
+        maxSkew: 1
+        minDomains: 3
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+{{- end }}

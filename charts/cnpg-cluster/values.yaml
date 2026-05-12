@@ -89,3 +89,23 @@ scheduledBackup:
   # cluster
   # method
   # pluginConfiguration
+
+pooler:
+  enabled: false
+  template:
+    spec:
+      containers:
+        - name: pgbouncer
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              memory: 200Mi
+              cpu: 10m
+  pgbouncer:
+    poolMode: session
+    parameters:
+      max_client_conn: "1000"
+      default_pool_size: "20"
+      query_wait_timeout: "120"
+      server_connect_timeout: "30"

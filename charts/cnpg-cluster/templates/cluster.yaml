@@ -2,7 +2,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: {{ include "cnpg-cluster.fullname" . }}
+  name: {{ include "cnpg-cluster.name" . }}
   labels:
     {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
@@ -15,7 +15,7 @@ spec:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
-        barmanObjectName: {{ include "cnpg-cluster.fullname" . }}
+        barmanObjectName: {{ include "cnpg-cluster.name" . }}
   serviceAccountTemplate:
     metadata:
       annotations:
@@ -32,7 +32,7 @@ spec:
   topologySpreadConstraints:
     - labelSelector:
         matchLabels:
-          cnpg.io/cluster: {{ include "cnpg-cluster.fullname" . }}
+          cnpg.io/cluster: {{ include "cnpg-cluster.name" . }}
           app.kubernetes.io/component: database
       maxSkew: 1
       minDomains: 3

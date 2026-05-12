@@ -3,7 +3,7 @@
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
-  name: {{ include "cnpg-cluster.fullname" . }}
+  name: {{ include "cnpg-cluster.name" . }}
   labels:
     {{- include "cnpg-cluster.labels" . | nindent 4 }}
 spec:
