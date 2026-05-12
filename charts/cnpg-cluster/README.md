@@ -6,7 +6,9 @@ This helm chart is a very thin wrapper around CloudNativePG to deploy a PostgreS
 
 This chart essentially passes through your entire config for each object type, while manually setting a couple special parameters to ensure everything works together.
 
-The chart isn't really that "smart" besides automating connecting the pieces together.
+The chart isn't really that "smart" besides automating connecting the pieces together, and providing defaults that work for our environment.
+
+It does, however, essentially match all features available in CloudNativePG because of the pass-through, so you don't have to worry about whether or not the chart supports a feature.
 
 ## Configure
 
