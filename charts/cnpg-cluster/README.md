@@ -18,13 +18,15 @@ serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: "${cnpg_role}"
 cluster:
-  # Must include the secret for the postgres user
-  superuserSecret:
-    name: "airflow-postgres"
+  spec:
+    # Must include the secret for the postgres user
+    superuserSecret:
+      name: "airflow-postgres"
 objectStore:
-  # Must include the S3 destination for backup storage
-  configuration:
-    destinationPath: "s3://${cnpg_backup_s3}"
+  spec:
+    # Must include the S3 destination for backup storage
+    configuration:
+      destinationPath: "s3://${cnpg_backup_s3}"
 ```
 
 ### Recommended Minimal Configuration
@@ -37,32 +39,34 @@ serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: "${cnpg_role}"
 cluster:
-  instances: 2
-  storage:
-    size: 20Gi
-  walStorage:
-    size: 12Gi
-  # Must include the secret for the postgres user
-  superuserSecret:
-    name: "airflow-postgres"
-  priorityClass: app-critical
-  # CPU and memory allocation
-  resources:
-    requests:
-      memory: "1024Mi"
-      cpu: "100m"
-    limits:
-      # Memory limits should always equal requests
-      memory: "1024Mi"
-  postgresql:
-    parameters:
-      # Set to roughly 1/4 of total memory
-      shared_buffers: "256MB"
+  spec:
+    instances: 2
+    storage:
+      size: 20Gi
+    walStorage:
+      size: 12Gi
+    # Must include the secret for the postgres user
+    superuserSecret:
+      name: "airflow-postgres"
+    priorityClass: app-critical
+    # CPU and memory allocation
+    resources:
+      requests:
+        memory: "1024Mi"
+        cpu: "100m"
+      limits:
+        # Memory limits should always equal requests
+        memory: "1024Mi"
+    postgresql:
+      parameters:
+        # Set to roughly 1/4 of total memory
+        shared_buffers: "256MB"
 objectStore:
-  retentionPolicy: '10d'
-  # Must include the S3 destination for backup storage
-  configuration:
-    destinationPath: "s3://${cnpg_backup_s3}"
+  spec:
+    retentionPolicy: '10d'
+    # Must include the S3 destination for backup storage
+    configuration:
+      destinationPath: "s3://${cnpg_backup_s3}"
 ```
 
 ### Additional configuration items
