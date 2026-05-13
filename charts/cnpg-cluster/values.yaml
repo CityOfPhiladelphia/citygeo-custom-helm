@@ -87,7 +87,7 @@ scheduledBackup:
   enabled: true
   spec:
     # Create immediate backup, highly recommended
-    immediate: true 
+    immediate: true
     # Weekly backups may not seem like much, but combined with WAL archive is plenty
     schedule: "0 0 0 * * 0"
     # DO NOT set these values as they are handled automatically by the chart
@@ -100,6 +100,9 @@ monitoring:
 
 pooler:
   enabled: false
+  pdb:
+    enabled: true
+    maxUnavailable: 1
   spec:
     template:
       spec:

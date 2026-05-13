@@ -42,4 +42,17 @@ spec:
         minDomains: 3
         topologyKey: topology.kubernetes.io/zone
         whenUnsatisfiable: DoNotSchedule
+{{- if .Values.pooler.pdb.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "cnpg-cluster.name" . }}-pooler
+spec:
+  maxUnavailable: {{ .Values.pooler.pdb.maxUnavailable }}
+  selector:
+    matchLabels:
+      cnpg.io/cluster: {{ include "cnpg-cluster.name" . }}
+      app.kubernetes.io/component: pooler
+{{- end }}
 {{- end }}
