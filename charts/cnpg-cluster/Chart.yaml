@@ -3,7 +3,8 @@ name: cnpg-cluster
 description: A Helm chart for Kubernetes
 
 maintainers:
-  - name: Ryan Weast
+  - name: Weastie
+    url: https://github.com/Weastie
 
 # A chart can be either an 'application' or a 'library' chart.
 #
