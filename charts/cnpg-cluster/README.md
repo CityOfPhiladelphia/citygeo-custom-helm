@@ -44,6 +44,7 @@ serviceAccount:
     eks.amazonaws.com/role-arn: "${cnpg_role}"
 cluster:
   spec:
+    imageName: ghcr.io/cloudnative-pg/postgresql:18.3-minimal-trixie
     instances: 2
     storage:
       size: 20Gi
