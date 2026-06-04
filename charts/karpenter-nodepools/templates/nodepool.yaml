@@ -3,7 +3,7 @@
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: static-{{ if eq .arch "arm64" }}arm{{ else }}x86{{ end }}-{{ substr (sub (len .zone) 2) (len .zone) .zone }}-{{ .instanceType }}
+  name: static-{{ if eq .arch "arm64" }}arm{{ else }}x86{{ end }}-{{ substr (sub (int (len .zone)) 2) (int (len .zone)) .zone }}-{{ .instanceType }}
 spec:
   # Static pool
   replicas: {{ .replicas | int }}
