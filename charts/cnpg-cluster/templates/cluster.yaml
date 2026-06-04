@@ -24,11 +24,6 @@ spec:
   # Require pods to be on on-demand nodes,
   # not on the same host node, and evenly
   # spread across AZs
-  affinity:
-    nodeSelector:
-      karpenter.sh/capacity-type: on-demand
-      nodepool-category: static
-    podAntiAffinityType: required
 
   topologySpreadConstraints:
     - labelSelector:
