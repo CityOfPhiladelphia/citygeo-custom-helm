@@ -43,7 +43,7 @@ spec:
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
-        name: {{ if eq .arch "arm64" }}arm{{ else }}default{{ end }}
+        name: default
       expireAfter: 720h # 30 * 24h = 720h
       terminationGracePeriod: "360s"
 ---
