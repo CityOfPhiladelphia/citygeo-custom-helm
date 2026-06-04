@@ -1,9 +1,15 @@
 ---
 {{- range .Values.nodePools }}
+{{/* 1. Coerce the length into a strict integer variable */}}
+{{- $zoneLength := int (len .zone) }}
+{{/* 2. Compute the starting index safely using the variable */}}
+{{- $startIndex := sub $zoneLength 2 }}
+{{/* 3. Slice the string to get the last two characters (e.g., '1a') */}}
+{{- $zoneSuffix := substr $startIndex $zoneLength .zone }}
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: static-{{ if eq .arch "arm64" }}arm{{ else }}x86{{ end }}-{{ substr (sub (int (len .zone)) 2) (int (len .zone)) .zone }}-{{ .instanceType }}
+  name: static-{{ if eq .arch "arm64" }}arm{{ else }}x86{{ end }}-{{ $zoneSuffix }}-{{ .instanceType }}
 spec:
   # Static pool
   replicas: {{ .replicas | int }}
