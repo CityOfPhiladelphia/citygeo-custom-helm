@@ -1,0 +1,46 @@
+---
+{{- range .Values.nodePools }}
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: static-{{ if eq .arch "arm64" }}arm{{ else }}x86{{ end }}-{{ substr (sub (len .zone) 2) (len .zone) .zone }}-{{ .instanceType }}
+spec:
+  # Static pool
+  replicas: {{ .replicas }}
+  template:
+    metadata:
+      # This label lets us identify and schedule
+      # pods onto the static provisioned nodes
+      labels:
+        nodepool-category: static
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: [{{ quote .arch }}]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.k8s.aws/instance-encryption-in-transit-supported
+          operator: In
+          values: ["true"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+        # Instead of offering a variety of instance
+        # types / families / categories, we
+        # select a specific kind
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values: [{{ quote .instanceType }}]
+        - key: topology.kubernetes.io/zone
+          operator: In
+          values: [{{ quote .zone }}]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: {{ if eq .arch "arm64" }}arm{{ else }}default{{ end }}
+      expireAfter: 720h # 30 * 24h = 720h
+      terminationGracePeriod: "360s"
+---
+{{- end }}
