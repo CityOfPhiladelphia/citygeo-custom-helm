@@ -141,6 +141,19 @@ entries:
   karpenter-nodepools:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2026-06-04T18:56:26.333685107Z"
+    description: A Helm chart for Kubernetes
+    digest: 44e748ffca185f00cd6c4edc72140a47122a50990c8006a76ec880160d3c6e27
+    maintainers:
+    - name: Weastie
+      url: https://github.com/Weastie
+    name: karpenter-nodepools
+    type: application
+    urls:
+    - https://github.com/CityOfPhiladelphia/citygeo-custom-helm/releases/download/karpenter-nodepools-0.0.6/karpenter-nodepools-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2026-06-04T18:53:22.945643364Z"
     description: A Helm chart for Kubernetes
     digest: 1ac87a380ccb75782a7cf90b0c4cc00f5f0bdf6da0f2a283679be99fd3620d75
@@ -204,4 +217,4 @@ entries:
     urls:
     - https://github.com/CityOfPhiladelphia/citygeo-custom-helm/releases/download/karpenter-nodepools-0.0.1/karpenter-nodepools-0.0.1.tgz
     version: 0.0.1
-generated: "2026-06-04T18:53:22.945684615Z"
+generated: "2026-06-04T18:56:26.333754136Z"
