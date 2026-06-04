@@ -6,7 +6,7 @@ metadata:
   name: static-{{ if eq .arch "arm64" }}arm{{ else }}x86{{ end }}-{{ substr (sub (len .zone) 2) (len .zone) .zone }}-{{ .instanceType }}
 spec:
   # Static pool
-  replicas: {{ .replicas }}
+  replicas: {{ .replicas | int }}
   template:
     metadata:
       # This label lets us identify and schedule
