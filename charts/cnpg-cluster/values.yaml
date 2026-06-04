@@ -45,10 +45,14 @@ cluster:
       storageClass: ebs-sc
       # Should be approximately 2.4x higher than max_wal_size
       size: 12Gi
+    affinity:
+      nodeSelector:
+        karpenter.sh/capacity-type: on-demand
+        nodepool-category: static
+      podAntiAffinityType: required
     # DO NOT set these values as they are handled automatically by the chart
     # serviceAccountTemplate
     # plugins
-    # affinity
     # topologySpreadConstraints
 
 databases: []
