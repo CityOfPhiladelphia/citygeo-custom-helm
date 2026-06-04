@@ -18,12 +18,6 @@ spec:
       labels:
         nodepool-category: static
     spec:
-      {{ if eq .arch "arm64" }}
-      taints:
-        - key: kubernetes.io/arch
-          value: arm64
-          effect: NoSchedule
-      {{ end }}
       requirements:
         - key: kubernetes.io/arch
           operator: In
