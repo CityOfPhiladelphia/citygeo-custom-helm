@@ -22,6 +22,8 @@ cluster:
         shared_buffers: "256MB"
         max_wal_size: "5GB"
         min_wal_size: "1GB"
+        # Set to roughly 3/4 of walStorage.size
+        max_slot_wal_keep_size: "9GB"
         checkpoint_timeout: "15min"
         # lz4 is a very fast compression algorithm that
         # reduces how much streaming data is sent across AZs.
