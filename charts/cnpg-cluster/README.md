@@ -66,9 +66,11 @@ cluster:
       parameters:
         # Set to roughly 1/4 of total memory
         shared_buffers: "256MB"
+        # Set to roughly 3/4 of walStorage.size
+        max_slot_wal_keep_size: "9GB"
 objectStore:
   spec:
-    retentionPolicy: '10d'
+    retentionPolicy: "10d"
     # Must include the S3 destination for backup storage
     configuration:
       destinationPath: "s3://${cnpg_backup_s3}"
@@ -144,7 +146,7 @@ spec:
           destinationPath: "s3://${cnpg_backup_s3}"
 ```
 
-Restored  cluster:
+Restored cluster:
 
 ```yaml
 ---
