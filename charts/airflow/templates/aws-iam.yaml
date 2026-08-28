@@ -65,19 +65,19 @@ spec:
               "Sid": "AllowClusterToAssume",
               "Effect": "Allow",
               "Principal": {
-                  "Federated": "${cluster_oidc_arn}"
+                  "Federated": "{{ .aws.clusterOIDCArn }}"
               },
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                   "StringLike": {
-                      "${cluster_oidc_url}:sub": "system:serviceaccount:{{ .Release.Namespace }}:*"
+                      "{{ .aws.clusterOIDCUrl }}:sub": "system:serviceaccount:{{ .Release.Namespace }}:*"
                   }
               }
           }
       ]
     }
   policies:
-    - "${aws_kms_policy_arn}"
+    - "{{ .aws.kmsPolicyArn }}"
     - "arn:aws:iam::958289163165:policy/{{ .clusterName }}-{{ .Release.Name }}-s3"
   #policyRefs:
   #  - from:

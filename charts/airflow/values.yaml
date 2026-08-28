@@ -1,3 +1,10 @@
 dagGitBranch: main
 envName: ~
 clusterName: ~
+aws:
+  kmsKeyId: ~
+  kmsPolicyArn: ~
+  elasticacheSgId: ~
+  elasticacheSubnetGroup: ~
+  clusterOIDCArn: ~
+  clusterOIDCUrl: ~

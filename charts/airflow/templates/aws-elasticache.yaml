@@ -11,12 +11,12 @@ spec:
   replicationGroupID: "{{ .Release.Name }}-{{ .envName }}"
   description: Valkey Cluster for Airflow Celery Workers
   cacheNodeType: cache.t4g.micro
-  kmsKeyID: "${kms_id}"
+  kmsKeyID: "{{ .aws.kmsKeyId }}"
   engine: valkey
   engineVersion: "9.0"
   securityGroupIDs:
-    - "${elasticache_sg_id}"
-  cacheSubnetGroupName: "${elasticache_subnet_group}"
+    - "{{ .aws.elasticacheSgId }}"
+  cacheSubnetGroupName: "{{ .aws.elasticacheSubnetGroup }}"
   transitEncryptionEnabled: true
   atRestEncryptionEnabled: true
   authToken:
