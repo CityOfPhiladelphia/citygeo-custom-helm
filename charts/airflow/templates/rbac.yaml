@@ -1,0 +1,29 @@
+# Apply a role to our {{ .Release.Name }}-worker-sa that is able to launch/modify pods
+# so that we can use the kubernetes_cmd operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-worker-custom-pod-launcher
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "pods/status", "pods/exec"]
+    # Your error explicitly states it needs "list", but you'll need the rest to create/track them
+    verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
+  - apiGroups: [""]
+    # Added core "events" resource
+    resources: ["events"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}-worker-custom-pod-launcher-binding
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-worker-sa # Must exactly match the name in your 403 error
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ .Release.Name }}-worker-custom-pod-launcher
+  apiGroup: rbac.authorization.k8s.io

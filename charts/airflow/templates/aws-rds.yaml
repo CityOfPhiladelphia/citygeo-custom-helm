@@ -42,4 +42,5 @@ spec:
       name: {{ .Release.Name }}-postgres
   to:
     name: ack-outputs
+    namespace: {{ .Values.ackOutputsNamespace }}
     kind: secret

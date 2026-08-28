@@ -1,6 +1,10 @@
 dagGitBranch: main
 envName: ~
 clusterName: ~
+dnsName: ~
+ackOutputsNamespace: ~
+secrets:
+  k8sSecretStore: ~
 aws:
   kmsKeyId: ~
   kmsPolicyArn: ~
