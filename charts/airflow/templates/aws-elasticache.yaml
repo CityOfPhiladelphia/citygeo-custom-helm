@@ -33,7 +33,7 @@ spec:
     resource:
       group: elasticache.services.k8s.aws
       kind: ReplicationGroup
-      name: {{ .Release.Name }}-valkey-host
+      name: {{ .Release.Name }}-valkey
   to:
     name: ack-outputs
     namespace: {{ .Values.ackOutputsNamespace }}
