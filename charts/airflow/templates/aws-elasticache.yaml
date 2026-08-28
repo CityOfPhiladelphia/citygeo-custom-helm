@@ -6,17 +6,17 @@ metadata:
   # annotations:
   #   services.k8s.aws/adoption-policy: "adopt-or-create"
   #   services.k8s.aws/adoption-fields: |
-  #     {"replicationGroupID": "{{ .name }}-{{ .envName }}"}
+  #     {"replicationGroupID": "{{ .name }}-{{ .Values.envName }}"}
 spec:
-  replicationGroupID: "{{ .Release.Name }}-{{ .envName }}"
+  replicationGroupID: "{{ .Release.Name }}-{{ .Values.envName }}"
   description: Valkey Cluster for Airflow Celery Workers
   cacheNodeType: cache.t4g.micro
-  kmsKeyID: "{{ .aws.kmsKeyId }}"
+  kmsKeyID: "{{ .Values.aws.kmsKeyId }}"
   engine: valkey
   engineVersion: "9.0"
   securityGroupIDs:
-    - "{{ .aws.elasticacheSgId }}"
-  cacheSubnetGroupName: "{{ .aws.elasticacheSubnetGroup }}"
+    - "{{ .Values.aws.elasticacheSgId }}"
+  cacheSubnetGroupName: "{{ .Values.aws.elasticacheSubnetGroup }}"
   transitEncryptionEnabled: true
   atRestEncryptionEnabled: true
   authToken:
