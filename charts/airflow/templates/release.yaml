@@ -1,0 +1,405 @@
+
+# How to manage values files. Ref: https://fluxcd.io/docs/guides/helmreleases/#refer-to-values-inside-the-chart
+# How to inject values: https://fluxcd.io/docs/guides/helmreleases/#cloud-storage
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: {{ .Release.Name }}-release
+spec:
+  releaseName: {{ .Release.Name }}
+  targetNamespace: {{ .Release.Namespace }}
+  # Airflow needs a huge timeout because when worker
+  # pods get replaced they take a long time
+  timeout: {{ .Values.helm.timeout }}
+  interval: {{ .Values.helm.interval }}
+  chart:
+    spec:
+      # Chart version is overwritten in overlay
+      chart: airflow
+      sourceRef:
+        kind: HelmRepository
+        name: airflow
+        namespace: flux-system
+  install:
+    remediation:
+      retries: {{ .Values.helm.install.retries }}
+  upgrade:
+    force: true
+    remediation:
+      retries: {{ .Values.helm.upgrade.retries }}
+  # https://artifacthub.io/packages/helm/apache-airflow/airflow?modal=values
+  values:
+    executor: CeleryExecutor
+    allowPodLaunching: true
+    # apiSecretKey, jwtSecret, webserverSecret?
+    apiSecretKeySecretName: airflow-custom-api-secret
+    jwtSecretName: airflow-custom-jwt-secret
+    data:
+      # not needed cause pgbouncer will be used instead.
+      metadataSecretName: {{ .Release.Name }}-db
+      brokerUrlSecretName: {{ .Release.Name }}-valkey
+    # Get all secrets from airflow-connections secret
+    extraEnvFrom: |-
+      - secretRef:
+          name: '{{ .Values.secrets.connectionsSecretName }}'
+
+    # https://airflow.apache.org/docs/helm-chart/stable/production-guide.html#pgbouncer
+    # necessary because airflow uses a lot of connections.
+    pgbouncer:
+      enabled: true
+      resources:
+        limits:
+          memory: "128Mi"
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+      #maxClientConn: 230
+      metadataPoolSize: 100
+      resultBackendPoolSize: 30
+      configSecretName: {{ .Release.Name }}-pgbouncer-config
+      metricsExporterSidecar:
+        statsSecretName: {{ .Release.Name }}-pgbouncer-stats
+
+    env:
+      {{- toYaml .Values.airflow.env | nindent 6 }}
+    volumes:
+      - name: github-app-ssh-key
+        secret:
+          secretName: {{ .Values.secrets.githubAppSecretName }}
+          items:
+            - key: {{ .Values.secrets.githubAppSecretKey }}
+              path: gh_app_priv_key
+              mode: 0400
+    images:
+      airflow:
+        {{- toYaml .Values.airflow.image | nindent 8}}
+    workers:
+      celery:
+        replicas: {{ .Values.airflow.celery.replicas }}
+        terminationGracePeriodSeconds: {{ .Values.airflow.celery.terminationGracePeriodSeconds }}
+        resources:
+          limits:
+            memory: "1.8Gi"
+          requests:
+            cpu: "400m"
+            memory: "1.8Gi"
+        podDisruptionBudget:
+          enabled: true
+          config:
+            minAvailable: 1
+        priorityClassName: app-high
+        nodeSelector:
+          # Airflow is x86/amd64 only
+          kubernetes.io/arch: amd64
+          # Celery workers in must be on-demand
+          karpenter.sh/capacity-type: on-demand
+          # to reduce data transfer costs writing to databridge
+          {{- if .Values.airflow.celery.nodeSelectorExtra }}
+            {{- toYaml .Values.airflow.celery.nodeSelectorExtra | nindent 10 }}
+          {{- end }}
+        env:
+          {{- toYaml .Values.airflow.celery.env | nindent 10 }}
+        serviceAccount:
+          annotations:
+            eks.amazonaws.com/role-arn: "arn:aws:iam::{{ .Values.aws.accountId }}:role/{{ .Values.clusterName }}-{{ .Release.Name }}-irsa"
+          name: airflow-worker-sa
+        logGroomerSidecar:
+          enabled: true
+          # Number of days to retain logs
+          retentionDays: 15
+          # frequency to attempt to groom logs, in minutes
+          frequencyMinutes: 15
+          resources:
+            limits:
+              memory: 192Mi
+              # Though I'm usually opposed to CPU limits, the log groomer
+              # seems to eat up a lot of CPU when it grooms. Setting a cpu
+              # limit just means it will do it more gracefully over time,
+              # which seems fine.
+              cpu: 100m
+            requests:
+              cpu: 10m
+              memory: 192Mi
+    scheduler:
+      resources:
+        limits:
+          memory: "580Mi"
+        requests:
+          cpu: "300m"
+          memory: "580Mi"
+      podDisruptionBudget:
+        enabled: true
+        config:
+          maxUnavailable: 1
+      nodeSelector:
+        # Airflow is x86/amd64 only
+        kubernetes.io/arch: amd64
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              component: scheduler
+          maxSkew: 1
+          minDomains: 3
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+      logGroomerSidecar:
+        enabled: true
+        # Number of days to retain logs
+        retentionDays: 15
+        # frequency to attempt to groom logs, in minutes
+        frequencyMinutes: 15
+        resources:
+          limits:
+            memory: 192Mi
+            cpu: 100m
+          requests:
+            cpu: 10m
+            memory: 192Mi
+    apiServer:
+      allowPodLogReading: true
+      resources:
+        limits:
+          memory: "1.15Gi"
+        requests:
+          cpu: "600m"
+          memory: "1.15Gi"
+      # Bug: https://github.com/apache/airflow/issues/52270
+      env:
+        - name: AIRFLOW__API__WORKERS
+          value: "1"
+      podDisruptionBudget:
+        enabled: true
+        config:
+          maxUnavailable: 1
+      nodeSelector:
+        # Airflow is x86/amd64 only
+        kubernetes.io/arch: amd64
+      serviceAccount:
+        annotations:
+          eks.amazonaws.com/role-arn: "arn:aws:iam::{{ .Values.aws.accountId }}:role/{{ .Values.clusterName }}-{{ .Release.Name }}-irsa"
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              component: api-server
+          maxSkew: 1
+          minDomains: 3
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+    triggerer:
+      resources:
+        limits:
+          memory: "580Mi"
+        requests:
+          cpu: "170m"
+          memory: "580Mi"
+      podDisruptionBudget:
+        # Have to disable pdb because replicas doesn't actually work
+        enabled: false
+        config:
+          maxUnavailable: ~
+          minAvailable: 1
+      persistence:
+        # Enable persistent volumes
+        enabled: true
+        size: 8Gi
+        storageClassName: ebs-sc
+      nodeSelector:
+        # Airflow is x86/amd64 only
+        kubernetes.io/arch: amd64
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              component: triggerer
+          maxSkew: 1
+          minDomains: 3
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+      logGroomerSidecar:
+        enabled: true
+        retentionDays: 15
+        frequencyMinutes: 15
+        resources:
+          limits:
+            cpu: 100m
+            memory: 192Mi
+          requests:
+            cpu: 10m
+            memory: 192Mi
+    dagProcessor:
+      resources:
+        limits:
+          memory: "1100Mi"
+        requests:
+          cpu: "600m"
+          memory: "1100Mi"
+      podDisruptionBudget:
+        enabled: true
+        config:
+          maxUnavailable: 1
+      nodeSelector:
+        # Airflow is x86/amd64 only
+        kubernetes.io/arch: amd64
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              component: dag-processor
+          maxSkew: 1
+          minDomains: 3
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+      logGroomerSidecar:
+        enabled: true
+        retentionDays: 15
+        frequencyMinutes: 15
+        resources:
+          limits:
+            cpu: 100m
+            memory: 192Mi
+          requests:
+            cpu: 10m
+            memory: 192Mi
+    # https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html#clean
+    databaseCleanup:
+      enabled: true
+      # Don't allow Karpenter to kill jobs prematurely
+      podAnnotations:
+        karpenter.sh/do-not-disrupt: "true"
+      nodeSelector:
+        # Airflow is x86/amd64 only
+        kubernetes.io/arch: amd64
+      retentionDays: 90
+      tables:
+        - _xcom_archive
+        - asset_event
+        - callback_request
+        - celery_taskmeta
+        - celery_tasksetmeta
+        - dag
+        - dag_run
+        - dag_version
+        - deadline
+        - import_error
+        - job
+        - log
+        - sla_miss
+        - task_instance
+        - task_instance_history
+        - task_reschedule
+        - trigger
+        - xcom
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          cpu: 30m
+          memory: 256Mi
+    postgresql:
+      enabled: false
+    config:
+      api:
+        expose_config: "True"
+        instance_name: "DagNabbit"
+        base_url: "https://{{ .Values.dnsName }}"
+      # https://airflow.apache.org/docs/apache-airflow/stable/configurations-ref.html
+      core:
+        default_timezone: "America/New_York"
+        dagbag_import_timeout: 90.0
+        # max_active_tasks_per_dag: 20
+        # max_active_runs_per_dag: 20
+        # same reasoning as min_file_process_interval below.
+        min_serialized_dag_update_interval: 1500
+        # Sets up S3 object storage xcom backend
+        xcom_backend: airflow.providers.common.io.xcom.backend.XComObjectStorageBackend
+        # Determines how many times a task can be parallelized and split out
+        # It's useful to have this number bigger than the amount of tables we have in databridge
+        max_map_length: 1536
+      email:
+        from_email: "DagNabbit <airflow-dag-alerts@phila.gov>"
+        email_backend: airflow.utils.email.send_email_smtp
+        subject_template: /opt/airflow/dags/repo/templates/email_subject.txt
+        html_content_template: /opt/airflow/dags/repo/templates/email_body.html
+      celery:
+        worker_concurrency: {{ .Values.airflow.celery.concurrency }}
+      logging:
+        remote_logging: true
+        remote_base_log_folder: "s3://phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}"
+      common.io:
+        # Sets up S3 object storage xcom backend
+        xcom_objectstorage_path: "s3://phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}/backend"
+        # Only store in bucket if xcom is bigger than 100Kb
+        xcom_objectstorage_threshold: "102400"
+        xcom_objectstorage_compression: gzip
+      dag_processor:
+        # We have to hit re-parse or trigger a re-parse via github
+        # Prevents dag_processor from blowing up on our dag factory
+        min_file_process_interval: 1500
+        # Disable parallelization
+        parsing_processes: 1
+      # https://airflow.apache.org/docs/apache-airflow/2.6.0/configurations-ref.html#config-database-sql-alchemy-pool-size
+      database:
+        sql_alchemy_pool_size: 20
+        sql_alchemy_max_overflow: 25
+    logs:
+      persistence:
+        enabled: true
+        size: 10Gi
+        storageClassName: efs-sc
+    redis:
+      enabled: false
+    dags:
+      persistence:
+        enabled: false
+      gitSync:
+        enabled: true
+        resources:
+          limits:
+            memory: "40Mi"
+          requests:
+            cpu: "10m"
+            memory: "40Mi"
+        repo: {{ .Values.dags.repo }}
+        rev: HEAD
+        ref: {{ .Values.dags.branch }}
+        period: 60s
+        subPath: ""
+        extraVolumeMounts:
+          - name: github-app-ssh-key
+            mountPath: "/etc/github-app-ssh-key"
+            readOnly: true
+        # Airflow doesn't offer a convenient way to pass
+        # these github app env variables, but git-sync
+        # does support them: https://github.com/kubernetes/git-sync
+        env:
+          - name: GITSYNC_GITHUB_APP_INSTALLATION_ID
+            valueFrom:
+              secretKeyRef:
+                name: citygeo-bot-github-app
+                key: {{ .Values.secrets.githubAppPrivateKeySecretKey }}
+          - name: GITSYNC_GITHUB_APP_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: citygeo-bot-github-app
+                key: {{ .Values.secrets.githubAppClientIdSecretKey }}
+          - name: GITSYNC_GITHUB_APP_PRIVATE_KEY_FILE
+            value: /etc/github-app-ssh-key/gh_app_priv_key
+    # TODO: Dags
+    # https://airflow.apache.org/docs/helm-chart/1.18.0/#installing-the-chart-with-argo-cd-flux-rancher-or-terraform
+    createUserJob:
+      # Don't allow Karpenter to kill jobs prematurely
+      annotations:
+        karpenter.sh/do-not-disrupt: "true"
+      nodeSelector:
+        # Airflow is x86/amd64 only
+        kubernetes.io/arch: amd64
+      useHelmHooks: false
+      applyCustomEnv: false
+    migrateDatabaseJob:
+      # Don't allow Karpenter to kill jobs prematurely
+      annotations:
+        karpenter.sh/do-not-disrupt: "true"
+      nodeSelector:
+        # Airflow is x86/amd64 only
+        kubernetes.io/arch: amd64
+      useHelmHooks: false
+      applyCustomEnv: false

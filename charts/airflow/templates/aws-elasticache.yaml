@@ -26,14 +26,14 @@ spec:
 apiVersion: services.k8s.aws/v1alpha1
 kind: FieldExport
 metadata:
-  name: {{ .Release.Name }}-valkey
+  name: {{ .Release.Name }}-valkey-host
 spec:
   from:
     path: ".status.nodeGroups[0].primaryEndpoint.address"
     resource:
       group: elasticache.services.k8s.aws
       kind: ReplicationGroup
-      name: {{ .Release.Name }}-valkey
+      name: {{ .Release.Name }}-valkey-host
   to:
     name: ack-outputs
     namespace: {{ .Values.ackOutputsNamespace }}

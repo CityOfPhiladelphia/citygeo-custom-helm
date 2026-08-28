@@ -1,11 +1,41 @@
-dagGitBranch: main
+dags:
+  repo: ~
+  branch: ~
 envName: ~
 clusterName: ~
 dnsName: ~
 ackOutputsNamespace: ~
 secrets:
   k8sSecretStore: ~
+  valkeyPasswordSecretName: airflow-valkey-creds
+  dbPasswordSecretName: airflow-db-creds
+  githubAppSecretName: ~
+  githubAppPrivateKeySecretKey: ~
+  githubAppInstallIdSecretKey: ~
+  githubAppClientIdSecretKey: ~
+  connectionsSecretName: airflow-connections
+helm:
+  timeout: 30m
+  install:
+    retries: 1
+  upgrade:
+    retries: 1
+airflow:
+  image:
+    repository: ~
+    digest: ~
+    tag: ~
+  env:
+    - name: AWS_REGION
+      value: us-east-1
+  celery:
+    replicas: 2
+    terminationGracePeriodSeconds: 2700
+    concurrency: 2
+    nodeSelectorExtra: ~
+    env: []
 aws:
+  accountId: ~
   kmsKeyId: ~
   kmsKeyArn: ~
   kmsPolicyArn: ~
