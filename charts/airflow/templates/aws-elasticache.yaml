@@ -36,5 +36,4 @@ spec:
       name: openmetadata-postgres
   to:
     name: ack-outputs
-    namespace: flux-system
     kind: secret
