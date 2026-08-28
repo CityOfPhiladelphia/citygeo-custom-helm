@@ -2,13 +2,13 @@
 apiVersion: elasticache.services.k8s.aws/v1alpha1
 kind: ReplicationGroup
 metadata:
-  name: {{ .name }}-valkey
+  name: {{ .Release.Name }}-valkey
   # annotations:
   #   services.k8s.aws/adoption-policy: "adopt-or-create"
   #   services.k8s.aws/adoption-fields: |
   #     {"replicationGroupID": "{{ .name }}-${env_name}"}
 spec:
-  replicationGroupID: "{{ .name }}-${env_name}"
+  replicationGroupID: "{{ .Release.Name }}-${env_name}"
   description: Valkey Cluster for Airflow Celery Workers
   cacheNodeType: cache.t4g.micro
   kmsKeyID: "${kms_id}"
