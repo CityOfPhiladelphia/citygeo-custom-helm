@@ -68,7 +68,7 @@ spec:
         secret:
           secretName: {{ .Values.secrets.githubAppSecretName }}
           items:
-            - key: {{ .Values.secrets.githubAppSecretKey }}
+            - key: {{ .Values.secrets.githubAppPrivateKeySecretKey }}
               path: gh_app_priv_key
               mode: 0400
     images:
