@@ -6,9 +6,9 @@ metadata:
   # annotations:
   #   services.k8s.aws/adoption-policy: "adopt-or-create"
   #   services.k8s.aws/adoption-fields: |
-  #     {"arn": "arn:aws:iam::958289163165:policy/${cluster_name}-airflow-s3"}
+  #     {"arn": "arn:aws:iam::958289163165:policy/{{ .clusterName }}-airflow-s3"}
 spec:
-  name: ${cluster_name}-{{ .Release.Name }}-s3
+  name: {{ .clusterName }}-{{ .Release.Name }}-s3
   policyDocument: |
     {
       "Statement": [
@@ -22,10 +22,10 @@ spec:
               ],
               "Effect": "Allow",
               "Resource": [
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-${cluster_name}",
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-${cluster_name}/*",
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-${cluster_name}",
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-${cluster_name}/*",
+                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-{{ .clusterName }}",
+                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-{{ .clusterName }}/*",
+                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-{{ .clusterName }}",
+                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-{{ .clusterName }}/*",
                   "arn:aws:s3:::citygeo-airflow-databridge2",
                   "arn:aws:s3:::citygeo-airflow-databridge2/*",
                   "arn:aws:s3:::citygeo-airflow-databridge2-testing",
@@ -53,9 +53,9 @@ metadata:
   # annotations:
   #   services.k8s.aws/adoption-policy: "adopt-or-create"
   #   services.k8s.aws/adoption-fields: |
-  #     {"name": "${cluster_name}-airflow-irsa"}
+  #     {"name": "{{ .clusterName }}-airflow-irsa"}
 spec:
-  name: ${cluster_name}-{{ .Release.Name }}-irsa
+  name: {{ .clusterName }}-{{ .Release.Name }}-irsa
   description: Airflow IRSA
   assumeRolePolicyDocument: |
     {
@@ -78,7 +78,7 @@ spec:
     }
   policies:
     - "${aws_kms_policy_arn}"
-    - "arn:aws:iam::958289163165:policy/${cluster_name}-{{ .Release.Name }}-s3"
+    - "arn:aws:iam::958289163165:policy/{{ .clusterName }}-{{ .Release.Name }}-s3"
   #policyRefs:
   #  - from:
   #      name: airflow

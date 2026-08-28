@@ -6,9 +6,9 @@ metadata:
   # annotations:
   #   services.k8s.aws/adoption-policy: "adopt-or-create"
   #   services.k8s.aws/adoption-fields: |
-  #     {"replicationGroupID": "{{ .name }}-${env_name}"}
+  #     {"replicationGroupID": "{{ .name }}-{{ .envName }}"}
 spec:
-  replicationGroupID: "{{ .Release.Name }}-${env_name}"
+  replicationGroupID: "{{ .Release.Name }}-{{ .envName }}"
   description: Valkey Cluster for Airflow Celery Workers
   cacheNodeType: cache.t4g.micro
   kmsKeyID: "${kms_id}"
