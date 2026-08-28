@@ -1,0 +1,88 @@
+---
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  name: {{ .Release.Name }}-s3-logs
+  # annotations:
+  #   services.k8s.aws/adoption-policy: "adopt-or-create"
+  #   services.k8s.aws/adoption-fields: |
+  #     {"name": "phl-{{ .Release.Name }}-logs-${cluster_name}"}
+spec:
+  name: phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}
+  encryption:
+    rules:
+      - bucketKeyEnabled: true
+        applyServerSideEncryptionByDefault:
+          sseAlgorithm: "aws:kms"
+          kmsMasterKeyID: "{{ .Values.aws.kmsKeyId }}"
+  publicAccessBlock:
+    blockPublicACLs: true
+    blockPublicPolicy: true
+    ignorePublicACLs: true
+    restrictPublicBuckets: true
+  policy: |
+    {
+      "Version": "2012-10-17",
+      "Id": "AccessControl",
+      "Statement": [
+          {
+              "Sid": "AllowSSlRequestsOnly",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Action": "s3:*",
+              "Resource": [
+                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}",
+                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}/*"
+              ],
+              "Condition": {
+                  "Bool": {
+                      "aws:SecureTransport": "false"
+                  }
+              }
+          }
+      ]
+    }
+---
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  name: {{ .Release.Name }}-s3-xcom
+  # annotations:
+  #   services.k8s.aws/adoption-policy: "adopt-or-create"
+  #   services.k8s.aws/adoption-fields: |
+  #     {"name": "phl-{{ .Release.Name }}-xcom-${cluster_name}"}
+spec:
+  name: phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}
+  encryption:
+    rules:
+      - bucketKeyEnabled: true
+        applyServerSideEncryptionByDefault:
+          sseAlgorithm: "aws:kms"
+          kmsMasterKeyID: "{{ .Values.aws.kmsKeyId }}"
+  publicAccessBlock:
+    blockPublicACLs: true
+    blockPublicPolicy: true
+    ignorePublicACLs: true
+    restrictPublicBuckets: true
+  policy: |
+    {
+      "Version": "2012-10-17",
+      "Id": "AccessControl",
+      "Statement": [
+          {
+              "Sid": "AllowSSlRequestsOnly",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Action": "s3:*",
+              "Resource": [
+                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}",
+                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}/*"
+              ],
+              "Condition": {
+                  "Bool": {
+                      "aws:SecureTransport": "false"
+                  }
+              }
+          }
+      ]
+    }

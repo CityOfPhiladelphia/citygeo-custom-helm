@@ -78,7 +78,7 @@ spec:
     }
   policies:
     - "{{ .Values.aws.kmsPolicyArn }}"
-    - "arn.aws:iam::958289163165:policy/{{ .clusterName }}-{{ .Release.Name }}-s3"
+    - "arn:aws:iam::958289163165:policy/{{ .clusterName }}-{{ .Release.Name }}-s3"
   #policyRefs:
   #  - from:
   #      name: airflow
