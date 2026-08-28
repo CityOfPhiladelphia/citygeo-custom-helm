@@ -374,12 +374,12 @@ spec:
           - name: GITSYNC_GITHUB_APP_INSTALLATION_ID
             valueFrom:
               secretKeyRef:
-                name: citygeo-bot-github-app
+                name: {{ .Values.secrets.githubAppSecretName }}
                 key: {{ .Values.secrets.githubAppPrivateKeySecretKey }}
           - name: GITSYNC_GITHUB_APP_CLIENT_ID
             valueFrom:
               secretKeyRef:
-                name: citygeo-bot-github-app
+                name: {{ .Values.secrets.githubAppSecretName }}
                 key: {{ .Values.secrets.githubAppClientIdSecretKey }}
           - name: GITSYNC_GITHUB_APP_PRIVATE_KEY_FILE
             value: /etc/github-app-ssh-key/gh_app_priv_key
