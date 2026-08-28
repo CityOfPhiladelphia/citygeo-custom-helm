@@ -7,7 +7,7 @@ kind: HelmRelease
 metadata:
   name: {{ .Release.Name }}-release
 spec:
-  releaseName: {{ .Release.Name }}
+  releaseName: {{ .Release.Name }}-release
   targetNamespace: {{ .Release.Namespace }}
   # Airflow needs a huge timeout because when worker
   # pods get replaced they take a long time
