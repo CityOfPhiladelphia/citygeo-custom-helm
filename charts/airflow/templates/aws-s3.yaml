@@ -14,7 +14,7 @@ spec:
       - bucketKeyEnabled: true
         applyServerSideEncryptionByDefault:
           sseAlgorithm: "aws:kms"
-          kmsMasterKeyID: "{{ .Values.aws.kmsKeyId }}"
+          kmsMasterKeyID: "{{ .Values.aws.kmsKeyArn }}"
   publicAccessBlock:
     blockPublicACLs: true
     blockPublicPolicy: true
@@ -58,7 +58,7 @@ spec:
       - bucketKeyEnabled: true
         applyServerSideEncryptionByDefault:
           sseAlgorithm: "aws:kms"
-          kmsMasterKeyID: "{{ .Values.aws.kmsKeyId }}"
+          kmsMasterKeyID: "{{ .Values.aws.kmsKeyArn }}"
   publicAccessBlock:
     blockPublicACLs: true
     blockPublicPolicy: true
