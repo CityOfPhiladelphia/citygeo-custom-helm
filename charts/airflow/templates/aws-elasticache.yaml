@@ -11,7 +11,7 @@ spec:
   replicationGroupID: "{{ .Release.Name }}-{{ .Values.envName }}"
   description: Valkey Cluster for Airflow Celery Workers
   cacheNodeType: cache.t4g.micro
-  kmsKeyID: "{{ .Values.aws.kmsKeyArn }}"
+  kmsKeyID: "{{ .Values.aws.kmsKeyId }}"
   engine: valkey
   engineVersion: "9.0"
   securityGroupIDs:

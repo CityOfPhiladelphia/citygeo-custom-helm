@@ -23,7 +23,7 @@ spec:
   vpcSecurityGroupIDs:
     - "{{ .Values.aws.rdsSgId }}"
   dbSubnetGroupName: "{{ .Values.aws.rdsSubnetGroup }}"
-  kmsKeyID: "{{ .Values.aws.kmsKeyId }}"
+  kmsKeyID: "{{ .Values.aws.kmsKeyArn }}"
   enableCloudwatchLogsExports:
     - postgresql
     - upgrade
