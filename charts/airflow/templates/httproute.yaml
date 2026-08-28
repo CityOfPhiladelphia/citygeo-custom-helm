@@ -9,7 +9,7 @@ spec:
       namespace: envoy-gateway-system
       sectionName: https
   hostnames:
-    - "{{ dnsName }}"
+    - "{{ .Values.dnsName }}"
   rules:
     - backendRefs:
         - name: {{ .Release.Name }}-api-server
@@ -29,7 +29,7 @@ spec:
       namespace: envoy-gateway-system
       sectionName: http
   hostnames:
-    - "{{ dnsName }}"
+    - "{{ .Values.dnsName }}"
   rules:
     - filters:
         - type: RequestRedirect
