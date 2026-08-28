@@ -16,6 +16,7 @@ secrets:
   connectionsSecretName: airflow-connections
 helm:
   timeout: 30m
+  interval: 30m
   install:
     retries: 1
   upgrade:
