@@ -1,0 +1,84 @@
+---
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Policy
+metadata:
+  name: {{ .name }}-s3
+  # annotations:
+  #   services.k8s.aws/adoption-policy: "adopt-or-create"
+  #   services.k8s.aws/adoption-fields: |
+  #     {"arn": "arn:aws:iam::958289163165:policy/${cluster_name}-airflow-s3"}
+spec:
+  name: ${cluster_name}-{{ .name }}-s3
+  policyDocument: |
+    {
+      "Statement": [
+          {
+              "Action": [
+                  "s3:DeleteObject",
+                  "s3:GetObject",
+                  "s3:ListBucket",
+                  "s3:PutObject",
+                  "s3:HeadObject"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                  "arn:aws:s3:::phl-{{ .name }}-xcom-${cluster_name}",
+                  "arn:aws:s3:::phl-{{ .name }}-xcom-${cluster_name}/*",
+                  "arn:aws:s3:::phl-{{ .name }}-logs-${cluster_name}",
+                  "arn:aws:s3:::phl-{{ .name }}-logs-${cluster_name}/*",
+                  "arn:aws:s3:::citygeo-airflow-databridge2",
+                  "arn:aws:s3:::citygeo-airflow-databridge2/*",
+                  "arn:aws:s3:::citygeo-airflow-databridge2-testing",
+                  "arn:aws:s3:::citygeo-airflow-databridge2-testing/*",
+                  "arn:aws:s3:::citygeo-dbt-artifacts-testing/*",
+                  "arn:aws:s3:::citygeo-dbt-artifacts-testing",
+                  "arn:aws:s3:::citygeo-dbt-artifacts/*",
+                  "arn:aws:s3:::citygeo-dbt-artifacts",
+                  "arn:aws:s3:::opendata-downloads",
+                  "arn:aws:s3:::opendata-downloads/*",
+                  "arn:aws:s3:::databridge-glacier",
+                  "arn:aws:s3:::databridge-glacier/*",
+                  "arn:aws:s3:::oit-server-inventory/*",
+                  "arn:aws:s3:::oit-server-inventory"
+              ]
+          }
+      ],
+      "Version": "2012-10-17"
+    }
+---
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Role
+metadata:
+  name: {{ .name }}-irsa
+  # annotations:
+  #   services.k8s.aws/adoption-policy: "adopt-or-create"
+  #   services.k8s.aws/adoption-fields: |
+  #     {"name": "${cluster_name}-airflow-irsa"}
+spec:
+  name: ${cluster_name}-{{ .name }}-irsa
+  description: Airflow IRSA
+  assumeRolePolicyDocument: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Sid": "AllowClusterToAssume",
+              "Effect": "Allow",
+              "Principal": {
+                  "Federated": "${cluster_oidc_arn}"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                  "StringLike": {
+                      "${cluster_oidc_url}:sub": "system:serviceaccount:{{ .Release.Namespace }}:*"
+                  }
+              }
+          }
+      ]
+    }
+  policies:
+    - "${aws_kms_policy_arn}"
+    - "arn:aws:iam::958289163165:policy/${cluster_name}-{{ .name }}-s3"
+  #policyRefs:
+  #  - from:
+  #      name: airflow
