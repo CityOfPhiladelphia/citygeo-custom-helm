@@ -31,9 +31,9 @@ spec:
   from:
     path: ".status.nodeGroups[0].primaryEndpoint"
     resource:
-      group: rds.services.k8s.aws
-      kind: DBInstance
-      name: openmetadata-postgres
+      group: elasticache.services.k8s.aws
+      kind: ReplicationGroup
+      name: {{ .Release.Name }}-valkey
   to:
     name: ack-outputs
     kind: secret

@@ -1,0 +1,45 @@
+---
+apiVersion: rds.services.k8s.aws/v1alpha1
+kind: DBInstance
+metadata:
+  name: {{ .Release.Name }}-postgres
+  #annotations:
+  #  services.k8s.aws/adoption-policy: "adopt-or-create"
+  #  services.k8s.aws/adoption-fields: |
+  #    {"dbInstanceIdentifier": "airflow-{{ .Values.clusterName }}"}
+spec:
+  engine: postgres
+  engineVersion: "{{ .Values.aws.rdsVersion }}"
+  dbInstanceIdentifier: "airflow-{{ .Values.clusterName }}"
+  dbInstanceClass: db.t4g.small
+  allocatedStorage: 20
+  maxAllocatedStorage: 40
+  masterUsername: postgres
+  masterUserPassword:
+    name: airflow-db-creds
+    key: password
+  storageEncrypted: true
+  storageType: gp3
+  vpcSecurityGroupIDs:
+    - "{{ .Values.aws.rdsSgId }}"
+  dbSubnetGroupName: "{{ .Values.aws.rdsSubnetGroup }}"
+  kmsKeyID: "{{ .Values.aws.kmsKeyId }}"
+  enableCloudwatchLogsExports:
+    - postgresql
+    - upgrade
+  backupRetentionPeriod: "{{ .Values.rdsBackupRetentionPeriod }}"
+---
+apiVersion: services.k8s.aws/v1alpha1
+kind: FieldExport
+metadata:
+  name: {{ .Release.Name }}-rds-host
+spec:
+  from:
+    path: ".status.endpoint.address"
+    resource:
+      group: rds.services.k8s.aws
+      kind: DBInstance
+      name: {{ .Release.Name }}-postgres
+  to:
+    name: ack-outputs
+    kind: secret

@@ -8,3 +8,7 @@ aws:
   elasticacheSubnetGroup: ~
   clusterOIDCArn: ~
   clusterOIDCUrl: ~
+  rdsVersion: ~
+  rdsSubnetGroup: ~
+  rdsSgId: ~
+  rdsBackupRetentionPeriod: 0
