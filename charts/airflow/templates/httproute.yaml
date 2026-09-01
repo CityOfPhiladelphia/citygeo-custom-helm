@@ -12,7 +12,7 @@ spec:
     - "{{ .Values.dnsName }}"
   rules:
     - backendRefs:
-        - name: {{ .Release.Name }}-api-server
+        - name: {{ .Release.Name }}-release-api-server
           port: 8080
       matches:
         - path:
