@@ -375,7 +375,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: {{ .Values.secrets.githubAppSecretName }}
-                key: {{ .Values.secrets.githubAppPrivateKeySecretKey }}
+                key: {{ .Values.secrets.githubAppInstallIdSecretKey }}
           - name: GITSYNC_GITHUB_APP_CLIENT_ID
             valueFrom:
               secretKeyRef:
@@ -383,7 +383,6 @@ spec:
                 key: {{ .Values.secrets.githubAppClientIdSecretKey }}
           - name: GITSYNC_GITHUB_APP_PRIVATE_KEY_FILE
             value: /etc/github-app-ssh-key/gh_app_priv_key
-    # TODO: Dags
     # https://airflow.apache.org/docs/helm-chart/1.18.0/#installing-the-chart-with-argo-cd-flux-rancher-or-terraform
     createUserJob:
       # Don't allow Karpenter to kill jobs prematurely
