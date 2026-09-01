@@ -393,6 +393,15 @@ spec:
       # Don't allow Karpenter to kill jobs prematurely
       annotations:
         karpenter.sh/do-not-disrupt: "true"
+      env:
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.adminPasswordSecretName }}
+              key: password
+      defaultUser:
+        username: citygeo_admin
+        password: "$(ADMIN_PASSWORD)"
       nodeSelector:
         # Airflow is x86/amd64 only
         kubernetes.io/arch: amd64

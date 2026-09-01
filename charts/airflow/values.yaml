@@ -9,6 +9,7 @@ secrets:
   k8sSecretStore: ~
   valkeyPasswordSecretName: airflow-valkey-creds
   dbPasswordSecretName: airflow-db-creds
+  adminPasswordSecretName: airflow-admin-login
   githubAppSecretName: ~
   githubAppPrivateKeySecretKey: ~
   githubAppInstallIdSecretKey: ~
