@@ -361,6 +361,7 @@ spec:
         repo: {{ .Values.dags.repo }}
         rev: HEAD
         ref: {{ .Values.dags.branch }}
+        branch: {{ .Values.dags.branch }}
         period: 60s
         subPath: ""
         extraVolumeMounts:
