@@ -103,7 +103,7 @@ spec:
         serviceAccount:
           annotations:
             eks.amazonaws.com/role-arn: "arn:aws:iam::{{ .Values.aws.accountId }}:role/{{ .Values.clusterName }}-{{ .Release.Name }}-irsa"
-          name: airflow-worker-sa
+          name: {{ .Release.Name }}-worker-sa
         logGroomerSidecar:
           enabled: true
           # Number of days to retain logs

@@ -8,10 +8,8 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["pods", "pods/log", "pods/status", "pods/exec"]
-    # Your error explicitly states it needs "list", but you'll need the rest to create/track them
     verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
   - apiGroups: [""]
-    # Added core "events" resource
     resources: ["events"]
     verbs: ["get", "list", "watch"]
 ---
@@ -21,7 +19,7 @@ metadata:
   name: {{ .Release.Name }}-worker-custom-pod-launcher-binding
 subjects:
   - kind: ServiceAccount
-    name: {{ .Release.Name }}-worker-sa # Must exactly match the name in your 403 error
+    name: {{ .Release.Name }}-worker-sa
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
