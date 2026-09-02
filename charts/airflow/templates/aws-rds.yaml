@@ -26,7 +26,7 @@ spec:
     - "{{ .Values.aws.rds.securityGroupID }}"
   dbSubnetGroupName: "{{ .Values.aws.rds.dbSubnetGroupName }}"
   kmsKeyID: "{{ .Values.aws.kmsKeyArn }}"
-  multiAZ: "{{ .Values.aws.rds.multiAZ }}"
+  multiAZ: {{ .Values.aws.rds.multiAZ }}
   deletionProtection: {{ .Values.aws.rds.deletionProtection }}
   enableCloudwatchLogsExports:
     - postgresql
