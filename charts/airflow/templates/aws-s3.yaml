@@ -68,6 +68,16 @@ spec:
     blockPublicPolicy: true
     ignorePublicACLs: true
     restrictPublicBuckets: true
+  {{- if .Values.aws.s3.autoExpireFiles }}
+  lifecycle:
+    rules:
+      abortIncompleteMultipartUpload: 
+        daysAfterInitiation: {{ .Values.aws.s3.lifetime }}
+      expiration:
+        days: {{ .Values.aws.s3.lifetime }}
+      noncurrentVersionExpiration:
+        noncurrentDays: {{ .Values.aws.s3.lifetime }}
+  {{- end }}
   policy: |
     {
       "Version": "2012-10-17",

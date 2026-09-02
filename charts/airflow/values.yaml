@@ -68,6 +68,9 @@ aws:
     replicasPerNodeGroup: 0
   clusterOIDCArn: ~
   clusterOIDCUrl: ~
+  s3:
+    autoExpireFiles: false
+    lifetime: 7
   rds:
     engineVersion: ~
     maxAllocatedStorage: 40
