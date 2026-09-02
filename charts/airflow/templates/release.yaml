@@ -49,7 +49,6 @@ spec:
     pgbouncer:
       enabled: true
       replicas: {{ .Values.pgbouncer.replicas }}
-      replicas: 2
       resources:
         {{- toYaml .Values.pgbouncer.resources | nindent 8 }}
       #maxClientConn: 230
