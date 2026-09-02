@@ -53,6 +53,7 @@ pgbouncer:
   replicas: 1
   resources: {}
 aws:
+  adoptAckResources: false
   accountId: ~
   kmsKeyId: ~
   kmsKeyArn: ~

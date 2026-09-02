@@ -3,10 +3,12 @@ apiVersion: s3.services.k8s.aws/v1alpha1
 kind: Bucket
 metadata:
   name: {{ .Release.Name }}-s3-logs
-  # annotations:
-  #   services.k8s.aws/adoption-policy: "adopt-or-create"
-  #   services.k8s.aws/adoption-fields: |
-  #     {"name": "phl-{{ .Release.Name }}-logs-${cluster_name}"}
+  {{- if .Values.aws.adoptAckResources }}
+  annotations:
+    services.k8s.aws/adoption-policy: "adopt-or-create"
+    services.k8s.aws/adoption-fields: |
+      {"name": "phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}"}
+  {{- end }}
 spec:
   name: phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}
   encryption:
@@ -47,10 +49,12 @@ apiVersion: s3.services.k8s.aws/v1alpha1
 kind: Bucket
 metadata:
   name: {{ .Release.Name }}-s3-xcom
-  # annotations:
-  #   services.k8s.aws/adoption-policy: "adopt-or-create"
-  #   services.k8s.aws/adoption-fields: |
-  #     {"name": "phl-{{ .Release.Name }}-xcom-${cluster_name}"}
+  {{- if .Values.aws.adoptAckResources }}
+  annotations:
+    services.k8s.aws/adoption-policy: "adopt-or-create"
+    services.k8s.aws/adoption-fields: |
+      {"name": "phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}"}
+  {{- end }}
 spec:
   name: phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}
   encryption:

@@ -3,10 +3,12 @@ apiVersion: elasticache.services.k8s.aws/v1alpha1
 kind: ReplicationGroup
 metadata:
   name: {{ .Release.Name }}-valkey
-  # annotations:
-  #   services.k8s.aws/adoption-policy: "adopt-or-create"
-  #   services.k8s.aws/adoption-fields: |
-  #     {"replicationGroupID": "{{ .name }}-{{ .Values.envName }}"}
+  {{- if .Values.aws.adoptAckResources }}
+  annotations:
+    services.k8s.aws/adoption-policy: "adopt-or-create"
+    services.k8s.aws/adoption-fields: |
+      {"replicationGroupID": "{{ .Release.Name }}-{{ .Values.envName }}"}
+  {{- end }}
 spec:
   replicationGroupID: "{{ .Release.Name }}-{{ .Values.envName }}"
   description: Valkey Cluster for Airflow Celery Workers

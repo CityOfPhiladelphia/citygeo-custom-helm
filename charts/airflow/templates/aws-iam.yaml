@@ -3,10 +3,12 @@ apiVersion: iam.services.k8s.aws/v1alpha1
 kind: Policy
 metadata:
   name: {{ .Release.Name }}-s3
-  # annotations:
-  #   services.k8s.aws/adoption-policy: "adopt-or-create"
-  #   services.k8s.aws/adoption-fields: |
-  #     {"arn": "arn.aws:iam::{{ .Values.aws.accountId }}:policy/{{ .clusterName }}-airflow-s3"}
+  {{- if .Values.aws.adoptAckResources }}
+  annotations:
+    services.k8s.aws/adoption-policy: "adopt-or-create"
+    services.k8s.aws/adoption-fields: |
+      {"arn": "arn.aws:iam::{{ .Values.aws.accountId }}:policy/{{ .Values.clusterName }}-{{ .Release.Name }}-s3"}
+  {{- end }}
 spec:
   name: {{ .Values.clusterName }}-{{ .Release.Name }}-s3
   policyDocument: |
@@ -50,10 +52,12 @@ apiVersion: iam.services.k8s.aws/v1alpha1
 kind: Role
 metadata:
   name: {{ .Release.Name }}-irsa
-  # annotations:
-  #   services.k8s.aws/adoption-policy: "adopt-or-create"
-  #   services.k8s.aws/adoption-fields: |
-  #     {"name": "{{ .clusterName }}-airflow-irsa"}
+  {{- if .Values.aws.adoptAckResources }}
+  annotations:
+    services.k8s.aws/adoption-policy: "adopt-or-create"
+    services.k8s.aws/adoption-fields: |
+      {"name": "{{ .Values.clusterName }}-{{ .Release.Name }}-irsa"}
+  {{- end }}
 spec:
   name: {{ .Values.clusterName }}-{{ .Release.Name }}-irsa
   description: Airflow IRSA
@@ -79,6 +83,3 @@ spec:
   policies:
     - "{{ .Values.aws.kmsPolicyArn }}"
     - "arn:aws:iam::{{ .Values.aws.accountId }}:policy/{{ .Values.clusterName }}-{{ .Release.Name }}-s3"
-  #policyRefs:
-  #  - from:
-  #      name: airflow
