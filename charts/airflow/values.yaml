@@ -32,10 +32,26 @@ airflow:
       value: us-east-1
   celery:
     replicas: 2
+    resources: {}
     terminationGracePeriodSeconds: 2700
     concurrency: 2
     nodeSelectorExtra: ~
     env: []
+  apiServer:
+    replicas: 2
+    resources: {}
+  scheduler:
+    replicas: 1
+    resources: {}
+  triggerer:
+    replicas: 1
+    resources: {}
+  dagProcessor:
+    replicas: 1
+    resources: {}
+pgbouncer:
+  replicas: 1
+  resources: {}
 aws:
   accountId: ~
   kmsKeyId: ~

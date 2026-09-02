@@ -48,12 +48,10 @@ spec:
     # necessary because airflow uses a lot of connections.
     pgbouncer:
       enabled: true
+      replicas: {{ .Values.pgbouncer.replicas }}
+      replicas: 2
       resources:
-        limits:
-          memory: "128Mi"
-        requests:
-          cpu: "100m"
-          memory: "128Mi"
+        {{- toYaml .Values.pgbouncer.resources | nindent 8 }}
       #maxClientConn: 230
       metadataPoolSize: 100
       resultBackendPoolSize: 30
@@ -79,11 +77,7 @@ spec:
         replicas: {{ .Values.airflow.celery.replicas }}
         terminationGracePeriodSeconds: {{ .Values.airflow.celery.terminationGracePeriodSeconds }}
         resources:
-          limits:
-            memory: "1.8Gi"
-          requests:
-            cpu: "400m"
-            memory: "1.8Gi"
+          {{- toYaml .Values.airflow.celery.resources | nindent 10 }}
         podDisruptionBudget:
           enabled: true
           config:
@@ -122,12 +116,9 @@ spec:
               cpu: 10m
               memory: 192Mi
     scheduler:
+      replicas: {{ .Values.airflow.scheduler.replicas }}
       resources:
-        limits:
-          memory: "580Mi"
-        requests:
-          cpu: "300m"
-          memory: "580Mi"
+        {{- toYaml .Values.airflow.scheduler.resources | nindent 8 }}
       podDisruptionBudget:
         enabled: true
         config:
@@ -157,13 +148,10 @@ spec:
             cpu: 10m
             memory: 192Mi
     apiServer:
-      allowPodLogReading: true
+      replicas: {{ .Values.airflow.apiServer.replicas }}
       resources:
-        limits:
-          memory: "1.15Gi"
-        requests:
-          cpu: "600m"
-          memory: "1.15Gi"
+        {{- toYaml .Values.airflow.apiServer.resources | nindent 8 }}
+      allowPodLogReading: true
       # Bug: https://github.com/apache/airflow/issues/52270
       env:
         - name: AIRFLOW__API__WORKERS
@@ -187,12 +175,9 @@ spec:
           topologyKey: topology.kubernetes.io/zone
           whenUnsatisfiable: DoNotSchedule
     triggerer:
+      replicas: {{ .Values.airflow.triggerer.replicas }}
       resources:
-        limits:
-          memory: "580Mi"
-        requests:
-          cpu: "170m"
-          memory: "580Mi"
+        {{- toYaml .Values.airflow.triggerer.resources | nindent 8 }}
       podDisruptionBudget:
         # Have to disable pdb because replicas doesn't actually work
         enabled: false
@@ -227,12 +212,9 @@ spec:
             cpu: 10m
             memory: 192Mi
     dagProcessor:
+      replicas: {{ .Values.airflow.dagProcessor.replicas }}
       resources:
-        limits:
-          memory: "1100Mi"
-        requests:
-          cpu: "600m"
-          memory: "1100Mi"
+        {{- toYaml .Values.airflow.dagProcessor.resources | nindent 8 }}
       podDisruptionBudget:
         enabled: true
         config:
