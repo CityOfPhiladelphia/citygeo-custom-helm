@@ -71,12 +71,13 @@ spec:
   {{- if .Values.aws.s3.autoExpireFiles }}
   lifecycle:
     rules:
-      abortIncompleteMultipartUpload: 
-        daysAfterInitiation: {{ .Values.aws.s3.lifetime }}
-      expiration:
-        days: {{ .Values.aws.s3.lifetime }}
-      noncurrentVersionExpiration:
-        noncurrentDays: {{ .Values.aws.s3.lifetime }}
+      - id: expire-files
+        abortIncompleteMultipartUpload: 
+          daysAfterInitiation: {{ .Values.aws.s3.lifetime }}
+        expiration:
+          days: {{ .Values.aws.s3.lifetime }}
+        noncurrentVersionExpiration:
+          noncurrentDays: {{ .Values.aws.s3.lifetime }}
   {{- end }}
   policy: |
     {
