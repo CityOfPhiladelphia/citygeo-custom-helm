@@ -15,10 +15,14 @@ spec:
   cacheNodeType: cache.t4g.micro
   kmsKeyID: "{{ .Values.aws.kmsKeyId }}"
   engine: valkey
-  engineVersion: "9.0"
+  engineVersion: "{{ .Values.aws.elasticache.engineVersion }}"
   securityGroupIDs:
-    - "{{ .Values.aws.elasticacheSgId }}"
-  cacheSubnetGroupName: "{{ .Values.aws.elasticacheSubnetGroup }}"
+    - "{{ .Values.aws.elasticache.securityGroupID }}"
+  cacheSubnetGroupName: "{{ .Values.aws.elasticache.cacheSubnetGroupName }}"
+  automaticFailoverEnabled: {{ .Values.aws.elasticache.automaticFailoverEnabled }}
+  multiAZEnabled: {{ .Values.aws.elasticache.multiAZEnabled }}
+  numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
+  replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
   transitEncryptionEnabled: true
   atRestEncryptionEnabled: true
   authToken:

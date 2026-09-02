@@ -58,11 +58,21 @@ aws:
   kmsKeyId: ~
   kmsKeyArn: ~
   kmsPolicyArn: ~
-  elasticacheSgId: ~
-  elasticacheSubnetGroup: ~
+  elasticache:
+    securityGroupID: ~
+    cacheSubnetGroupName: ~
+    engineVersion: "9.0"
+    automaticFailoverEnabled: false
+    multiAZEnabled: false
+    numNodeGroups: 1
+    replicasPerNodeGroup: 0
   clusterOIDCArn: ~
   clusterOIDCUrl: ~
-  rdsVersion: ~
-  rdsSubnetGroup: ~
-  rdsSgId: ~
-  rdsBackupRetentionPeriod: 0
+  rds:
+    engineVersion: ~
+    maxAllocatedStorage: 40
+    multiAZ: false
+    securityGroupID: ~
+    dbSubnetGroupName: ~
+    deletionProtection: false
+    backupRetentionPeriod: 0

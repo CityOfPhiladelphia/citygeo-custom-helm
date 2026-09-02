@@ -11,11 +11,11 @@ metadata:
   {{- end }}
 spec:
   engine: postgres
-  engineVersion: "{{ .Values.aws.rdsVersion }}"
+  engineVersion: "{{ .Values.aws.rds.engineVersion }}"
   dbInstanceIdentifier: "{{ .Release.Name }}-{{ .Values.clusterName }}"
   dbInstanceClass: db.t4g.small
   allocatedStorage: 20
-  maxAllocatedStorage: 40
+  maxAllocatedStorage: {{ .Values.aws.rds.maxAllocatedStorage }}
   masterUsername: postgres
   masterUserPassword:
     name: airflow-db-creds
@@ -23,13 +23,15 @@ spec:
   storageEncrypted: true
   storageType: gp3
   vpcSecurityGroupIDs:
-    - "{{ .Values.aws.rdsSgId }}"
-  dbSubnetGroupName: "{{ .Values.aws.rdsSubnetGroup }}"
+    - "{{ .Values.aws.rds.securityGroupID }}"
+  dbSubnetGroupName: "{{ .Values.aws.rds.dbSubnetGroupName }}"
   kmsKeyID: "{{ .Values.aws.kmsKeyArn }}"
+  multiAZ: "{{ .Values.aws.rds.multiAZ }}"
+  deletionProtection: {{ .Values.aws.rds.deletionProtection }}
   enableCloudwatchLogsExports:
     - postgresql
     - upgrade
-  backupRetentionPeriod: {{ .Values.aws.rdsBackupRetentionPeriod }}
+  backupRetentionPeriod: {{ .Values.aws.rds.backupRetentionPeriod }}
 ---
 apiVersion: services.k8s.aws/v1alpha1
 kind: FieldExport
