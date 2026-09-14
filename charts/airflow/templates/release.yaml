@@ -5,9 +5,9 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Values.helm.releaseName }}
 spec:
-  releaseName: {{ .Release.Name }}
+  releaseName: {{ .Values.helm.releaseName }}
   targetNamespace: {{ .Release.Namespace }}
   # Airflow needs a huge timeout because when worker
   # pods get replaced they take a long time
