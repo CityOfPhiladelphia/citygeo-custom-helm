@@ -1,4 +1,36 @@
 ---
+apiVersion: elasticache.aws.m.upbound.io/v1beta1
+kind: ReplicationGroup
+metadata:
+  name: {{ .Release.Name }}-valkey
+  annotations:
+    crossplane.io/external-name: "{{ .Release.Name }}-{{ .Values.envName }}"
+spec:
+  managementPolicies: ["Observe"]
+  forProvider:
+    description: Valkey Cluster for Airflow Celery Workers
+    nodeType: cache.t4g.micro
+    kmsKeyID: "{{ .Values.aws.kmsKeyId }}"
+    engine: valkey
+    engineVersion: "{{ .Values.aws.elasticache.engineVersion }}"
+    securityGroupIDs:
+      - "{{ .Values.aws.elasticache.securityGroupID }}"
+    subnetGroupName: "{{ .Values.aws.elasticache.cacheSubnetGroupName }}"
+    automaticFailoverEnabled: {{ .Values.aws.elasticache.automaticFailoverEnabled }}
+    multiAzEnabled: {{ .Values.aws.elasticache.multiAZEnabled }}
+    numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
+    replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
+    transitEncryptionEnabled: true
+    atRestEncryptionEnabled: true
+    authToken:
+      name: airflow-valkey-creds
+      key: password
+
+  # Crossplane natively replaces ACK's FieldExport.
+  # This automatically extracts the endpoint, username, etc., into a Kubernetes Secret.
+  writeConnectionSecretToRef:
+    name: crossplane-{{ .Release.Name }}-valkey
+---
 apiVersion: elasticache.services.k8s.aws/v1alpha1
 kind: ReplicationGroup
 metadata:
