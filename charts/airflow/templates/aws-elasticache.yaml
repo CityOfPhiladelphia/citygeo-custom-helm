@@ -6,7 +6,7 @@ metadata:
   annotations:
     crossplane.io/external-name: "{{ .Release.Name }}-{{ .Values.envName }}"
 spec:
-  managementPolicies: ["Observe"]
+  managementPolicies: ["*"]
   forProvider:
     description: Valkey Cluster for Airflow Celery Workers
     region: "{{ .Values.aws.region }}"
@@ -32,49 +32,3 @@ spec:
   # This automatically extracts the endpoint, username, etc., into a Kubernetes Secret.
   writeConnectionSecretToRef:
     name: crossplane-{{ .Release.Name }}-valkey
----
-apiVersion: elasticache.services.k8s.aws/v1alpha1
-kind: ReplicationGroup
-metadata:
-  name: {{ .Release.Name }}-valkey
-  {{- if .Values.aws.adoptAckResources }}
-  annotations:
-    services.k8s.aws/adoption-policy: "adopt-or-create"
-    services.k8s.aws/adoption-fields: |
-      {"replicationGroupID": "{{ .Release.Name }}-{{ .Values.envName }}"}
-  {{- end }}
-spec:
-  replicationGroupID: "{{ .Release.Name }}-{{ .Values.envName }}"
-  description: Valkey Cluster for Airflow Celery Workers
-  cacheNodeType: cache.t4g.micro
-  kmsKeyID: "{{ .Values.aws.kmsKeyId }}"
-  engine: valkey
-  engineVersion: "{{ .Values.aws.elasticache.engineVersion }}"
-  securityGroupIDs:
-    - "{{ .Values.aws.elasticache.securityGroupID }}"
-  cacheSubnetGroupName: "{{ .Values.aws.elasticache.cacheSubnetGroupName }}"
-  automaticFailoverEnabled: {{ .Values.aws.elasticache.automaticFailoverEnabled }}
-  multiAZEnabled: {{ .Values.aws.elasticache.multiAZEnabled }}
-  numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
-  replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
-  transitEncryptionEnabled: true
-  atRestEncryptionEnabled: true
-  authToken:
-    name: airflow-valkey-creds
-    key: password
----
-apiVersion: services.k8s.aws/v1alpha1
-kind: FieldExport
-metadata:
-  name: {{ .Release.Name }}-valkey-host
-spec:
-  from:
-    path: ".status.nodeGroups[0].primaryEndpoint.address"
-    resource:
-      group: elasticache.services.k8s.aws
-      kind: ReplicationGroup
-      name: {{ .Release.Name }}-valkey
-  to:
-    name: ack-outputs
-    namespace: {{ .Values.ackOutputsNamespace }}
-    kind: secret
