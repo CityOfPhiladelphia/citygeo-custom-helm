@@ -22,7 +22,7 @@ spec:
     replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
     transitEncryptionEnabled: true
     atRestEncryptionEnabled: true
-    authToken:
+    authTokenSecretRef:
       name: airflow-valkey-creds
       key: password
 
