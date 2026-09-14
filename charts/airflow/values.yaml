@@ -87,3 +87,5 @@ aws:
     deletionProtection: false
     backupRetentionPeriod: 0
     skipFinalSnapshot: true
+    iops: 0
+    storageThroughput: 0
