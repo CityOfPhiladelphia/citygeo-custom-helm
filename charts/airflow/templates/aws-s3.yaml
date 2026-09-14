@@ -2,7 +2,7 @@
 apiVersion: s3.services.k8s.aws/v1alpha1
 kind: Bucket
 metadata:
-  name: {{ .Values.innerHelm.releaseName }-s3-logs
+  name: {{ .Values.innerHelm.releaseName }}-s3-logs
   {{- if .Values.aws.adoptAckResources }}
   annotations:
     services.k8s.aws/adoption-policy: "adopt-or-create"
