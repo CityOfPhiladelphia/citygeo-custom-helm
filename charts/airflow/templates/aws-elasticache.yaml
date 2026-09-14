@@ -2,9 +2,9 @@
 apiVersion: elasticache.aws.m.upbound.io/v1beta1
 kind: ReplicationGroup
 metadata:
-  name: "{{ .Release.Name }}-{{ .Values.envName }}"
+  name: "{{ .Values.innerHelm.releaseName }-{{ .Values.envName }}"
   annotations:
-    crossplane.io/external-name: "{{ .Release.Name }}-{{ .Values.envName }}"
+    crossplane.io/external-name: "{{ .Values.innerHelm.releaseName }-{{ .Values.envName }}"
 spec:
   managementPolicies: ["*"]
   forProvider:

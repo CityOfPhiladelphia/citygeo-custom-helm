@@ -2,12 +2,12 @@
 apiVersion: iam.services.k8s.aws/v1alpha1
 kind: Policy
 metadata:
-  name: {{ .Release.Name }}-s3
+  name: {{ .Values.innerHelm.releaseName }}-s3
   {{- if .Values.aws.adoptAckResources }}
   annotations:
     services.k8s.aws/adoption-policy: "adopt-or-create"
     services.k8s.aws/adoption-fields: |
-      {"arn": "arn.aws:iam::{{ .Values.aws.accountId }}:policy/{{ .Values.clusterName }}-{{ .Release.Name }}-s3"}
+      {"arn": "arn.aws:iam::{{ .Values.aws.accountId }}:policy/{{ .Values.clusterName }}-{{ .Values.innerHelm.releaseName }-s3"}
   {{- end }}
 spec:
   name: {{ .Values.clusterName }}-{{ .Release.Name }}-s3
@@ -24,10 +24,10 @@ spec:
               ],
               "Effect": "Allow",
               "Resource": [
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}",
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}/*",
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}",
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}/*",
+                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }-xcom-{{ .Values.clusterName }}",
+                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }-xcom-{{ .Values.clusterName }}/*",
+                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }-logs-{{ .Values.clusterName }}",
+                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }-logs-{{ .Values.clusterName }}/*",
                   "arn:aws:s3:::citygeo-airflow-databridge2",
                   "arn:aws:s3:::citygeo-airflow-databridge2/*",
                   "arn:aws:s3:::citygeo-airflow-databridge2-testing",
@@ -51,15 +51,15 @@ spec:
 apiVersion: iam.services.k8s.aws/v1alpha1
 kind: Role
 metadata:
-  name: {{ .Release.Name }}-irsa
+  name: {{ .Values.innerHelm.releaseName }}-irsa
   {{- if .Values.aws.adoptAckResources }}
   annotations:
     services.k8s.aws/adoption-policy: "adopt-or-create"
     services.k8s.aws/adoption-fields: |
-      {"name": "{{ .Values.clusterName }}-{{ .Release.Name }}-irsa"}
+      {"name": "{{ .Values.clusterName }}-{{ .Values.innerHelm.releaseName }-irsa"}
   {{- end }}
 spec:
-  name: {{ .Values.clusterName }}-{{ .Release.Name }}-irsa
+  name: {{ .Values.clusterName }}-{{ .Values.innerHelm.releaseName }-irsa
   description: Airflow IRSA
   assumeRolePolicyDocument: |
     {

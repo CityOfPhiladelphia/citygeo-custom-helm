@@ -2,15 +2,15 @@
 apiVersion: s3.services.k8s.aws/v1alpha1
 kind: Bucket
 metadata:
-  name: {{ .Release.Name }}-s3-logs
+  name: {{ .Values.innerHelm.releaseName }-s3-logs
   {{- if .Values.aws.adoptAckResources }}
   annotations:
     services.k8s.aws/adoption-policy: "adopt-or-create"
     services.k8s.aws/adoption-fields: |
-      {"name": "phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}"}
+      {"name": "phl-{{ .Values.innerHelm.releaseName }-logs-{{ .Values.clusterName }}"}
   {{- end }}
 spec:
-  name: phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}
+  name: phl-{{ .Values.innerHelm.releaseName }-logs-{{ .Values.clusterName }}
   encryption:
     rules:
       - bucketKeyEnabled: true
@@ -46,8 +46,8 @@ spec:
               "Principal": "*",
               "Action": "s3:*",
               "Resource": [
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}",
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}/*"
+                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }-logs-{{ .Values.clusterName }}",
+                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }-logs-{{ .Values.clusterName }}/*"
               ],
               "Condition": {
                   "Bool": {
@@ -61,15 +61,15 @@ spec:
 apiVersion: s3.services.k8s.aws/v1alpha1
 kind: Bucket
 metadata:
-  name: {{ .Release.Name }}-s3-xcom
+  name: {{ .Values.innerHelm.releaseName }-s3-xcom
   {{- if .Values.aws.adoptAckResources }}
   annotations:
     services.k8s.aws/adoption-policy: "adopt-or-create"
     services.k8s.aws/adoption-fields: |
-      {"name": "phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}"}
+      {"name": "phl-{{ .Values.innerHelm.releaseName }-xcom-{{ .Values.clusterName }}"}
   {{- end }}
 spec:
-  name: phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}
+  name: phl-{{ .Values.innerHelm.releaseName }-xcom-{{ .Values.clusterName }}
   encryption:
     rules:
       - bucketKeyEnabled: true
@@ -105,8 +105,8 @@ spec:
               "Principal": "*",
               "Action": "s3:*",
               "Resource": [
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}",
-                  "arn:aws:s3:::phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}/*"
+                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }-xcom-{{ .Values.clusterName }}",
+                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }-xcom-{{ .Values.clusterName }}/*"
               ],
               "Condition": {
                   "Bool": {
