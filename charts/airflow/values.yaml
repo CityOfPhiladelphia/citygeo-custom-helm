@@ -57,6 +57,7 @@ pgbouncer:
 aws:
   adoptAckResources: false
   accountId: ~
+  region: us-east-1
   kmsKeyId: ~
   kmsKeyArn: ~
   kmsPolicyArn: ~
