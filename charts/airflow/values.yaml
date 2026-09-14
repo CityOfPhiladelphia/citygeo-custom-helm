@@ -17,7 +17,8 @@ secrets:
   githubAppInstallIdSecretKey: ~
   githubAppClientIdSecretKey: ~
   connectionsSecretName: airflow-connections
-helm:
+# Helm options for the inner helm release
+innerHelm:
   # Release name for the inner helm chart, must be different
   # from the release name of this outer helm chart
   releaseName: airflow
