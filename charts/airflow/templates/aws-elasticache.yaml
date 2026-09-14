@@ -9,7 +9,7 @@ spec:
   managementPolicies: ["Observe"]
   forProvider:
     description: Valkey Cluster for Airflow Celery Workers
-    region: "${{ .Values.aws.region }}"
+    region: "{{ .Values.aws.region }}"
     nodeType: cache.t4g.micro
     kmsKeyId: "{{ .Values.aws.kmsKeyId }}"
     engine: valkey
