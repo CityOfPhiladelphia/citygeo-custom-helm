@@ -11,8 +11,8 @@ spec:
   targetNamespace: {{ .Release.Namespace }}
   # Airflow needs a huge timeout because when worker
   # pods get replaced they take a long time
-  timeout: {{ .Values.helm.timeout }}
-  interval: {{ .Values.helm.interval }}
+  timeout: {{ .Values.innerHelm.timeout }}
+  interval: {{ .Values.innerHelm.interval }}
   chart:
     spec:
       # Chart version is overwritten in overlay
@@ -23,11 +23,11 @@ spec:
         namespace: flux-system
   install:
     remediation:
-      retries: {{ .Values.helm.install.retries }}
+      retries: {{ .Values.innerHelm.install.retries }}
   upgrade:
     force: true
     remediation:
-      retries: {{ .Values.helm.upgrade.retries }}
+      retries: {{ .Values.innerHelm.upgrade.retries }}
   # https://artifacthub.io/packages/helm/apache-airflow/airflow?modal=values
   values:
     executor: CeleryExecutor
