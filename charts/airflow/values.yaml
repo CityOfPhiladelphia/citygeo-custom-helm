@@ -5,8 +5,10 @@ envName: ~
 clusterName: ~
 dnsName: ~
 ackOutputsNamespace: ~
+k8sSecretStore:
+  kind: ClusterSecretStore
+  name: ~
 secrets:
-  k8sSecretStore: ~
   valkeyPasswordSecretName: airflow-valkey-creds
   dbPasswordSecretName: airflow-db-creds
   adminPasswordSecretName: airflow-admin-login

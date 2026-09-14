@@ -1,4 +1,39 @@
 ---
+apiVersion: rds.aws.m.upbound.io/v1beta1
+kind: Instance
+metadata:
+  name: {{ .Release.Name }}-postgres
+spec:
+  managementPolicies: ["Observe"]
+  forProvider:
+    region: us-east-1 # Adjust to your AWS region
+    engine: postgres
+    engineVersion: "{{ .Values.aws.rds.engineVersion }}"
+    identifier: "{{ .Release.Name }}-{{ .Values.clusterName }}"
+    instanceClass: db.t4g.small
+    allocatedStorage: 20
+    maxAllocatedStorage: {{ .Values.aws.rds.maxAllocatedStorage }}
+    username: postgres
+    passwordSecretRef:
+      name: airflow-db-creds
+      key: password
+    storageEncrypted: true
+    multiAz: {{ .Values.aws.rds.multiAZ }}
+    storageType: gp3
+    vpcSecurityGroupIds:
+      - "{{ .Values.aws.rds.securityGroupID }}"
+    dbSubnetGroupName: "{{ .Values.aws.rds.dbSubnetGroupName }}"
+    kmsKeyId: "{{ .Values.aws.kmsKeyArn }}"
+    enabledCloudwatchLogsExports:
+      - postgresql
+      - upgrade
+    backupRetentionPeriod: {{ .Values.aws.rds.backupRetentionPeriod }}
+
+  # Crossplane natively replaces ACK's FieldExport.
+  # This automatically extracts the endpoint, username, etc., into a Kubernetes Secret.
+  writeConnectionSecretToRef:
+    name: crossplane-{{ .Release.Name }}-rds
+---
 apiVersion: rds.services.k8s.aws/v1alpha1
 kind: DBInstance
 metadata:
