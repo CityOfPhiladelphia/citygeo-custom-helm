@@ -13,7 +13,7 @@ spec:
     kmsKeyID: "{{ .Values.aws.kmsKeyId }}"
     engine: valkey
     engineVersion: "{{ .Values.aws.elasticache.engineVersion }}"
-    securityGroupIDs:
+    securityGroupIds:
       - "{{ .Values.aws.elasticache.securityGroupID }}"
     subnetGroupName: "{{ .Values.aws.elasticache.cacheSubnetGroupName }}"
     automaticFailoverEnabled: {{ .Values.aws.elasticache.automaticFailoverEnabled }}
