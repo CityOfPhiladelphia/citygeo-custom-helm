@@ -2,7 +2,7 @@
 apiVersion: elasticache.aws.m.upbound.io/v1beta1
 kind: ReplicationGroup
 metadata:
-  name: {{ .Release.Name }}-valkey
+  name: "{{ .Release.Name }}-{{ .Values.envName }}"
   annotations:
     crossplane.io/external-name: "{{ .Release.Name }}-{{ .Values.envName }}"
 spec:
@@ -23,6 +23,7 @@ spec:
     replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
     transitEncryptionEnabled: true
     atRestEncryptionEnabled: "true"
+    autoMinorVersionUpgrade: "true"
     authTokenSecretRef:
       name: airflow-valkey-creds
       key: password
