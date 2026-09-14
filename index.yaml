@@ -3,6 +3,19 @@ entries:
   airflow:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2026-09-14T17:32:48.727166391Z"
+    description: A Helm chart for Kubernetes
+    digest: 5d71e804207b6076758f12b140e89a056d10effa8dc1de1977aabbb44b48b215
+    maintainers:
+    - name: Weastie
+      url: https://github.com/Weastie
+    name: airflow
+    type: application
+    urls:
+    - https://github.com/CityOfPhiladelphia/citygeo-custom-helm/releases/download/airflow-2.3.1/airflow-2.3.1.tgz
+    version: 2.3.1
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2026-09-14T17:30:24.872219784Z"
     description: A Helm chart for Kubernetes
     digest: 68ef85a1e1dfcf35a84cab45dc2e253ed4b8daac4bc8fc46a7dc3f6bca3213a6
@@ -1037,4 +1050,4 @@ entries:
     urls:
     - https://github.com/CityOfPhiladelphia/citygeo-custom-helm/releases/download/karpenter-nodepools-0.0.1/karpenter-nodepools-0.0.1.tgz
     version: 0.0.1
-generated: "2026-09-14T17:30:24.872359921Z"
+generated: "2026-09-14T17:32:48.727356568Z"
