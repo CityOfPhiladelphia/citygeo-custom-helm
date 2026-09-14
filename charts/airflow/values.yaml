@@ -87,5 +87,7 @@ aws:
     deletionProtection: false
     backupRetentionPeriod: 0
     skipFinalSnapshot: true
-    iops: 0
-    storageThroughput: 0
+    # Keep at -1 to disable setting custom value
+    iops: -1
+    # Keep at -1 to disable setting custom value
+    storageThroughput: -1

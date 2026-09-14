@@ -22,8 +22,12 @@ spec:
     storageEncrypted: true
     multiAz: {{ .Values.aws.rds.multiAZ }}
     storageType: gp3
+    {{- if ge .Values.aws.rds.iops 0 }}
     iops: {{ .Values.aws.rds.iops }}
+    {{- end }}
+    {{- if ge .Values.aws.rds.storageThroughput 0 }}
     storageThroughput: {{ .Values.aws.rds.storageThroughput }}
+    {{- end }}
     vpcSecurityGroupIds:
       - "{{ .Values.aws.rds.securityGroupID }}"
     dbSubnetGroupName: "{{ .Values.aws.rds.dbSubnetGroupName }}"
