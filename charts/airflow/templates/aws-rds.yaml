@@ -2,16 +2,16 @@
 apiVersion: rds.aws.m.upbound.io/v1beta1
 kind: Instance
 metadata:
-  name: {{ .Values.innerHelm.releaseName }-postgres
+  name: {{ .Values.innerHelm.releaseName }}-postgres
   annotations:
-    crossplane.io/external-name: "{{ .Values.innerHelm.releaseName }-{{ .Values.clusterName }}"
+    crossplane.io/external-name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
 spec:
   managementPolicies: ["*"]
   forProvider:
     region: us-east-1 # Adjust to your AWS region
     engine: postgres
     engineVersion: "{{ .Values.aws.rds.engineVersion }}"
-    identifier: "{{ .Values.innerHelm.releaseName }-{{ .Values.clusterName }}"
+    identifier: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
     instanceClass: db.t4g.small
     allocatedStorage: 20
     maxAllocatedStorage: {{ .Values.aws.rds.maxAllocatedStorage }}
