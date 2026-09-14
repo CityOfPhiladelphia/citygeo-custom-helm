@@ -21,7 +21,7 @@ spec:
     numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
     replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
     transitEncryptionEnabled: true
-    atRestEncryptionEnabled: true
+    atRestEncryptionEnabled: "true"
     authTokenSecretRef:
       name: airflow-valkey-creds
       key: password
