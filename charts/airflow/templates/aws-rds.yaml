@@ -2,7 +2,7 @@
 apiVersion: rds.aws.m.upbound.io/v1beta1
 kind: Instance
 metadata:
-  name: {{ .Values.innerHelm.releaseName }}-postgres
+  name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
   annotations:
     crossplane.io/external-name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
 spec:
@@ -30,6 +30,12 @@ spec:
       - postgresql
       - upgrade
     backupRetentionPeriod: {{ .Values.aws.rds.backupRetentionPeriod }}
+    {{- if .Values.aws.rds.skipFinalSnapshot }}
+    skipFinalSnapshot: true
+    {{- else }}
+    skipFinalSnapshot: false
+    finalSnapshotIdentifier: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}-final"
+    {{- end }}
 
   # Crossplane natively replaces ACK's FieldExport.
   # This automatically extracts the endpoint, username, etc., into a Kubernetes Secret.
