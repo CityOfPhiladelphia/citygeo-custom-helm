@@ -3,6 +3,8 @@ apiVersion: rds.aws.m.upbound.io/v1beta1
 kind: Instance
 metadata:
   name: {{ .Release.Name }}-postgres
+  annotations:
+    crossplane.io/external-name: "{{ .Release.Name }}-{{ .Values.clusterName }}"
 spec:
   managementPolicies: ["Observe"]
   forProvider:
