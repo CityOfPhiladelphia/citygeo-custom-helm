@@ -44,6 +44,7 @@ spec:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
         name: {{ $.Values.nodeClass }}
+      expireAfter: {{ $.Values.expireAfter }}
       terminationGracePeriod: {{ quote $.Values.terminationGracePeriod }}
 ---
 {{- end }}

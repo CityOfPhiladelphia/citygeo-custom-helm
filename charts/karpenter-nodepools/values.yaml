@@ -1,3 +1,4 @@
 nodePools: []
 nodeClass: default
 terminationGracePeriod: 7200s
+expireAfter: Never
