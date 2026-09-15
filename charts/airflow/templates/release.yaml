@@ -44,6 +44,10 @@ spec:
       - secretRef:
           name: '{{ .Values.secrets.connectionsSecretName }}'
 
+    # Restart airflow pods when secrets are updated
+    airflowPodAnnotations:
+      secret.reloader.stakater.com/auto: "true"
+
     # https://airflow.apache.org/docs/helm-chart/stable/production-guide.html#pgbouncer
     # necessary because airflow uses a lot of connections.
     pgbouncer:
