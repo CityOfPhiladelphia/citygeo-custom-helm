@@ -6,7 +6,8 @@ metadata:
   annotations:
     crossplane.io/external-name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.envName }}"
 spec:
-  managementPolicies: ["*"]
+  managementPolicies:
+    {{- toYaml .Values.aws.elasticache.managementPolicies | nindent 4 }}
   forProvider:
     description: Valkey Cluster for Airflow Celery Workers
     region: "{{ .Values.aws.region }}"
@@ -27,6 +28,9 @@ spec:
     authTokenSecretRef:
       name: airflow-valkey-creds
       key: password
+    tags:
+      Env: "${{ .Values.envName }}"
+      ManagedBy: "Crossplane"
 
   # Crossplane natively replaces ACK's FieldExport.
   # This automatically extracts the endpoint, username, etc., into a Kubernetes Secret.

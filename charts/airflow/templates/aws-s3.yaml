@@ -1,118 +1,18 @@
 ---
-apiVersion: s3.services.k8s.aws/v1alpha1
-kind: Bucket
+apiVersion: citygeo.phila.city/v1alpha1
+kind: XPrivateS3Bucket
 metadata:
-  name: {{ .Values.innerHelm.releaseName }}-s3-logs
-  {{- if .Values.aws.adoptAckResources }}
-  annotations:
-    services.k8s.aws/adoption-policy: "adopt-or-create"
-    services.k8s.aws/adoption-fields: |
-      {"name": "phl-{{ .Values.innerHelm.releaseName }}-logs-{{ .Values.clusterName }}"}
-  {{- end }}
-spec:
   name: phl-{{ .Values.innerHelm.releaseName }}-logs-{{ .Values.clusterName }}
-  encryption:
-    rules:
-      - bucketKeyEnabled: true
-        applyServerSideEncryptionByDefault:
-          sseAlgorithm: "aws:kms"
-          kmsMasterKeyID: "{{ .Values.aws.kmsKeyId }}"
-  publicAccessBlock:
-    blockPublicACLs: true
-    blockPublicPolicy: true
-    ignorePublicACLs: true
-    restrictPublicBuckets: true
-  {{- if .Values.aws.s3.autoExpireFiles }}
-  lifecycle:
-    rules:
-      - id: expire-files
-        status: "Enabled"
-        prefix: ""
-        abortIncompleteMultipartUpload: 
-          daysAfterInitiation: {{ .Values.aws.s3.lifetime }}
-        expiration:
-          days: {{ .Values.aws.s3.lifetime }}
-        noncurrentVersionExpiration:
-          noncurrentDays: {{ .Values.aws.s3.lifetime }}
-  {{- end }}
-  policy: |
-    {
-      "Version": "2012-10-17",
-      "Id": "AccessControl",
-      "Statement": [
-          {
-              "Sid": "AllowSSlRequestsOnly",
-              "Effect": "Deny",
-              "Principal": "*",
-              "Action": "s3:*",
-              "Resource": [
-                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }}-logs-{{ .Values.clusterName }}",
-                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }}-logs-{{ .Values.clusterName }}/*"
-              ],
-              "Condition": {
-                  "Bool": {
-                      "aws:SecureTransport": "false"
-                  }
-              }
-          }
-      ]
-    }
----
-apiVersion: s3.services.k8s.aws/v1alpha1
-kind: Bucket
-metadata:
-  name: {{ .Values.innerHelm.releaseName }}-s3-xcom
-  {{- if .Values.aws.adoptAckResources }}
-  annotations:
-    services.k8s.aws/adoption-policy: "adopt-or-create"
-    services.k8s.aws/adoption-fields: |
-      {"name": "phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}"}
-  {{- end }}
 spec:
+  managementPolicies:
+    {{- toYaml .Values.aws.s3.managementPolicies | nindent 4 }}
+  forceDestroy: {{ .Values.aws.s3.forceDelete }}
+---
+apiVersion: citygeo.phila.city/v1alpha1
+kind: XPrivateS3Bucket
+metadata:
   name: phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}
-  encryption:
-    rules:
-      - bucketKeyEnabled: true
-        applyServerSideEncryptionByDefault:
-          sseAlgorithm: "aws:kms"
-          kmsMasterKeyID: "{{ .Values.aws.kmsKeyId }}"
-  publicAccessBlock:
-    blockPublicACLs: true
-    blockPublicPolicy: true
-    ignorePublicACLs: true
-    restrictPublicBuckets: true
-  {{- if .Values.aws.s3.autoExpireFiles }}
-  lifecycle:
-    rules:
-      - id: expire-files
-        status: "Enabled"
-        prefix: ""
-        abortIncompleteMultipartUpload: 
-          daysAfterInitiation: {{ .Values.aws.s3.lifetime }}
-        expiration:
-          days: {{ .Values.aws.s3.lifetime }}
-        noncurrentVersionExpiration:
-          noncurrentDays: {{ .Values.aws.s3.lifetime }}
-  {{- end }}
-  policy: |
-    {
-      "Version": "2012-10-17",
-      "Id": "AccessControl",
-      "Statement": [
-          {
-              "Sid": "AllowSSlRequestsOnly",
-              "Effect": "Deny",
-              "Principal": "*",
-              "Action": "s3:*",
-              "Resource": [
-                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}",
-                  "arn:aws:s3:::phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}/*"
-              ],
-              "Condition": {
-                  "Bool": {
-                      "aws:SecureTransport": "false"
-                  }
-              }
-          }
-      ]
-    }
+spec:
+  managementPolicies:
+    {{- toYaml .Values.aws.s3.managementPolicies | nindent 4 }}
+  forceDestroy: {{ .Values.aws.s3.forceDelete }}

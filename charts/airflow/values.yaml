@@ -66,6 +66,8 @@ aws:
   kmsKeyArn: ~
   kmsPolicyArn: ~
   elasticache:
+    # Do not allow deleting Elasticache
+    managementPolicies: ["Create", "LateInitialize", "Observe", "Update"]
     securityGroupID: ~
     cacheSubnetGroupName: ~
     engineVersion: "9.0"
@@ -76,9 +78,12 @@ aws:
   clusterOIDCArn: ~
   clusterOIDCUrl: ~
   s3:
-    autoExpireFiles: false
-    lifetime: 7
+    managementPolicies: ["*"]
+    # Set to true to allow a bucket with files to be deleted
+    forceDelete: false
   rds:
+    # Do not allow deleting the RDS
+    managementPolicies: ["Create", "LateInitialize", "Observe", "Update"]
     engineVersion: ~
     maxAllocatedStorage: 40
     multiAZ: false

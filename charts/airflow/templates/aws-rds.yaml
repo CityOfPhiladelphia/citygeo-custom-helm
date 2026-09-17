@@ -6,7 +6,8 @@ metadata:
   annotations:
     crossplane.io/external-name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
 spec:
-  managementPolicies: ["*"]
+  managementPolicies:
+    {{- toYaml .Values.aws.rds.managementPolicies | nindent 4 }}
   forProvider:
     region: us-east-1 # Adjust to your AWS region
     engine: postgres
@@ -42,6 +43,9 @@ spec:
     skipFinalSnapshot: false
     finalSnapshotIdentifier: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}-final"
     {{- end }}
+    tags:
+      Env: "${{ .Values.envName }}"
+      ManagedBy: "Crossplane"
 
   # Crossplane natively replaces ACK's FieldExport.
   # This automatically extracts the endpoint, username, etc., into a Kubernetes Secret.
