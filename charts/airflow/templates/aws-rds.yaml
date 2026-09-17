@@ -1,16 +1,12 @@
 ---
-apiVersion: rds.aws.m.upbound.io/v1beta1
-kind: Instance
+apiVersion: citygeo.phila.city/v1alpha1
+kind: XPostgresRdsDb
 metadata:
   name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
-  annotations:
-    crossplane.io/external-name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
 spec:
   managementPolicies:
     {{- toYaml .Values.aws.rds.managementPolicies | nindent 4 }}
   forProvider:
-    region: us-east-1 # Adjust to your AWS region
-    engine: postgres
     engineVersion: "{{ .Values.aws.rds.engineVersion }}"
     identifier: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
     instanceClass: db.t4g.small
@@ -23,31 +19,7 @@ spec:
     storageEncrypted: true
     multiAz: {{ .Values.aws.rds.multiAZ }}
     storageType: gp3
-    {{- if ge (int .Values.aws.rds.iops) 0 }}
     iops: {{ .Values.aws.rds.iops }}
-    {{- end }}
-    {{- if ge (int .Values.aws.rds.storageThroughput) 0 }}
     storageThroughput: {{ .Values.aws.rds.storageThroughput }}
-    {{- end }}
-    vpcSecurityGroupIds:
-      - "{{ .Values.aws.rds.securityGroupID }}"
-    dbSubnetGroupName: "{{ .Values.aws.rds.dbSubnetGroupName }}"
-    kmsKeyId: "{{ .Values.aws.kmsKeyArn }}"
-    enabledCloudwatchLogsExports:
-      - postgresql
-      - upgrade
     backupRetentionPeriod: {{ .Values.aws.rds.backupRetentionPeriod }}
-    {{- if .Values.aws.rds.skipFinalSnapshot }}
-    skipFinalSnapshot: true
-    {{- else }}
-    skipFinalSnapshot: false
-    finalSnapshotIdentifier: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}-final"
-    {{- end }}
-    tags:
-      Env: "{{ .Values.envName }}"
-      ManagedBy: "Crossplane"
-
-  # Crossplane natively replaces ACK's FieldExport.
-  # This automatically extracts the endpoint, username, etc., into a Kubernetes Secret.
-  writeConnectionSecretToRef:
-    name: crossplane-{{ .Release.Name }}-rds
+    skipFinalSnapshot: {{ .Values.aws.rds.skipFinalSnapshot }}

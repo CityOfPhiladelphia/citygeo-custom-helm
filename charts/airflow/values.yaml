@@ -87,12 +87,7 @@ aws:
     engineVersion: ~
     maxAllocatedStorage: 40
     multiAZ: false
-    securityGroupID: ~
-    dbSubnetGroupName: ~
-    deletionProtection: false
     backupRetentionPeriod: 0
     skipFinalSnapshot: true
-    # Keep at -1 to disable setting custom value
-    iops: -1
-    # Keep at -1 to disable setting custom value
-    storageThroughput: -1
+    iops: ~
+    storageThroughput: ~
