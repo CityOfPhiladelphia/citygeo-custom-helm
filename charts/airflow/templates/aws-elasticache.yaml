@@ -29,7 +29,7 @@ spec:
       name: airflow-valkey-creds
       key: password
     tags:
-      Env: "${{ .Values.envName }}"
+      Env: "{{ .Values.envName }}"
       ManagedBy: "Crossplane"
 
   # Crossplane natively replaces ACK's FieldExport.
