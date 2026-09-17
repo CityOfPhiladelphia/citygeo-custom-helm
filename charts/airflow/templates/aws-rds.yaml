@@ -15,7 +15,6 @@ spec:
     passwordSecretRef:
       name: airflow-db-creds
       key: password
-    storageEncrypted: true
     multiAz: {{ .Values.aws.rds.multiAZ }}
     iops: {{ .Values.aws.rds.iops }}
     storageThroughput: {{ .Values.aws.rds.storageThroughput }}
