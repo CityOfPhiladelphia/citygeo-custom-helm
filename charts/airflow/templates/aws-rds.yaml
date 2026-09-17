@@ -18,7 +18,6 @@ spec:
       key: password
     storageEncrypted: true
     multiAz: {{ .Values.aws.rds.multiAZ }}
-    storageType: gp3
     iops: {{ .Values.aws.rds.iops }}
     storageThroughput: {{ .Values.aws.rds.storageThroughput }}
     backupRetentionPeriod: {{ .Values.aws.rds.backupRetentionPeriod }}
