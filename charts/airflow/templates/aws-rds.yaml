@@ -6,6 +6,7 @@ metadata:
 spec:
   managementPolicies:
     {{- toYaml .Values.aws.rds.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.rds.import }}
   forProvider:
     engineVersion: "{{ .Values.aws.rds.engineVersion }}"
     instanceClass: db.t4g.small
