@@ -8,7 +8,6 @@ spec:
     {{- toYaml .Values.aws.rds.managementPolicies | nindent 4 }}
   forProvider:
     engineVersion: "{{ .Values.aws.rds.engineVersion }}"
-    identifier: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
     instanceClass: db.t4g.small
     allocatedStorage: 20
     maxAllocatedStorage: {{ .Values.aws.rds.maxAllocatedStorage }}
