@@ -6,7 +6,8 @@ metadata:
 spec:
   managementPolicies:
     {{- toYaml .Values.aws.s3.managementPolicies | nindent 4 }}
-  forceDestroy: {{ .Values.aws.s3.forceDelete }}
+  forProvider:
+    forceDestroy: {{ .Values.aws.s3.forceDelete }}
 ---
 apiVersion: citygeo.phila.city/v1alpha1
 kind: XPrivateS3Bucket
@@ -15,4 +16,5 @@ metadata:
 spec:
   managementPolicies:
     {{- toYaml .Values.aws.s3.managementPolicies | nindent 4 }}
-  forceDestroy: {{ .Values.aws.s3.forceDelete }}
+  forProvider:
+    forceDestroy: {{ .Values.aws.s3.forceDelete }}

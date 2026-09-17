@@ -44,7 +44,7 @@ spec:
     finalSnapshotIdentifier: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}-final"
     {{- end }}
     tags:
-      Env: "${{ .Values.envName }}"
+      Env: "{{ .Values.envName }}"
       ManagedBy: "Crossplane"
 
   # Crossplane natively replaces ACK's FieldExport.
