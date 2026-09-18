@@ -61,8 +61,21 @@ spec:
       configSecretName: {{ .Release.Name }}-pgbouncer-config
       metricsExporterSidecar:
         statsSecretName: {{ .Release.Name }}-pgbouncer-stats
-
     env:
+      - name: AIRFLOW_CONN_SMTP_DEFAULT
+        value: >-
+          {
+            "conn_type": "smtp",
+            "host": "relay.city.phila.local",
+            "port": 25,
+            "extra": {
+              "disable_ssl": true,
+              "disable_tls": true,
+              "from_email": "airflow-dag-alerts@phila.gov",
+              "subject_template": "/opt/airflow/dags/repo/templates/email_subject.txt",
+              "html_content_template": "/opt/airflow/dags/repo/templates/email_body.html"
+            }
+          }
       {{- toYaml .Values.airflow.env | nindent 6 }}
     volumes:
       - name: github-app-ssh-key
