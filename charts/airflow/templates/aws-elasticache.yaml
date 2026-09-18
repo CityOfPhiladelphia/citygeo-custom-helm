@@ -1,38 +1,20 @@
 ---
-apiVersion: elasticache.aws.m.upbound.io/v1beta1
-kind: ReplicationGroup
+apiVersion: citygeo.phila.city/v1alpha1
+kind: ValkeyCache
 metadata:
   name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.envName }}"
-  annotations:
-    crossplane.io/external-name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.envName }}"
 spec:
   managementPolicies:
-    {{- toYaml .Values.aws.elasticache.managementPolicies | nindent 4 }}
+    {{- toYaml .Values.aws.rds.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.rds.import }}
   forProvider:
     description: Valkey Cluster for Airflow Celery Workers
-    region: "{{ .Values.aws.region }}"
     nodeType: cache.t4g.micro
-    kmsKeyId: "{{ .Values.aws.kmsKeyArn }}"
     engine: valkey
     engineVersion: "{{ .Values.aws.elasticache.engineVersion }}"
-    securityGroupIds:
-      - "{{ .Values.aws.elasticache.securityGroupID }}"
-    subnetGroupName: "{{ .Values.aws.elasticache.cacheSubnetGroupName }}"
-    automaticFailoverEnabled: {{ .Values.aws.elasticache.automaticFailoverEnabled }}
     multiAzEnabled: {{ .Values.aws.elasticache.multiAZEnabled }}
     numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
     replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
-    transitEncryptionEnabled: true
-    atRestEncryptionEnabled: "true"
-    autoMinorVersionUpgrade: "true"
     authTokenSecretRef:
       name: airflow-valkey-creds
       key: password
-    tags:
-      Env: "{{ .Values.envName }}"
-      ManagedBy: "Crossplane"
-
-  # Crossplane natively replaces ACK's FieldExport.
-  # This automatically extracts the endpoint, username, etc., into a Kubernetes Secret.
-  writeConnectionSecretToRef:
-    name: crossplane-{{ .Release.Name }}-valkey
