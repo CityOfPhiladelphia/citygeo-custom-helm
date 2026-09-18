@@ -10,6 +10,7 @@ spec:
   forProvider:
     engineVersion: "{{ .Values.aws.rds.engineVersion }}"
     instanceClass: db.t4g.small
+    deletionProtection: {{ .Values.aws.rds.deletionProtection }}
     allocatedStorage: 20
     maxAllocatedStorage: {{ .Values.aws.rds.maxAllocatedStorage }}
     username: postgres

@@ -82,6 +82,7 @@ aws:
   rds:
     # Do not allow deleting the RDS
     managementPolicies: ["Create", "LateInitialize", "Observe", "Update"]
+    deletionProtection: true
     import: false
     engineVersion: ~
     maxAllocatedStorage: 40
