@@ -384,7 +384,7 @@ spec:
               name: {{ .Values.secrets.adminPasswordSecretName }}
               key: password
       defaultUser:
-        username: citygeo_admin
+        username: {{ .Values.airflow.auth.adminUsername }}
         password: "$(ADMIN_PASSWORD)"
       nodeSelector:
         # Airflow is x86/amd64 only

@@ -36,6 +36,8 @@ airflow:
   env:
     - name: AWS_REGION
       value: us-east-1
+  auth:
+    adminUsername: admin
   celery:
     replicas: 2
     resources: {}
