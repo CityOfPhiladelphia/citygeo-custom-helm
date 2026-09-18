@@ -59,7 +59,6 @@ pgbouncer:
   replicas: 1
   resources: {}
 aws:
-  adoptAckResources: false
   region: us-east-1
   kmsPolicyArn: ~
   elasticache:
