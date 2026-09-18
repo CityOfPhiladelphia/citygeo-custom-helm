@@ -6,6 +6,7 @@ metadata:
 spec:
   managementPolicies:
     {{- toYaml .Values.aws.s3.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.s3.import }}
   forProvider:
     forceDestroy: {{ .Values.aws.s3.forceDelete }}
 ---
@@ -16,5 +17,6 @@ metadata:
 spec:
   managementPolicies:
     {{- toYaml .Values.aws.s3.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.s3.import }}
   forProvider:
     forceDestroy: {{ .Values.aws.s3.forceDelete }}

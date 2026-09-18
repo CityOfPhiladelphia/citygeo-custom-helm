@@ -77,10 +77,14 @@ aws:
     replicasPerNodeGroup: 0
   clusterOIDCArn: ~
   clusterOIDCUrl: ~
+  iam:
+    managementPolicies: ["*"]
+    import: false
   s3:
     managementPolicies: ["*"]
     # Set to true to allow a bucket with files to be deleted
     forceDelete: false
+    import: false
   rds:
     # Do not allow deleting the RDS
     managementPolicies: ["Create", "LateInitialize", "Observe", "Update"]

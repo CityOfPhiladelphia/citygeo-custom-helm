@@ -1,4 +1,30 @@
 ---
+apiVersion: citygeo.phila.city/v1alpha1
+kind: IRSA
+metadata:
+  name: "{{ .Values.clusterName }}-{{ .Values.innerHelm.releaseName }}-irsa"
+spec:
+  managementPolicies:
+    {{- toYaml .Values.aws.iam.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.iam.import }}
+  serviceAccount:
+    create: true
+    name: "{{ .Values.innerHelm.releaseName }}-irsa"
+  forProvider:
+    engineVersion: "{{ .Values.aws.rds.engineVersion }}"
+    instanceClass: db.t4g.small
+    allocatedStorage: 20
+    maxAllocatedStorage: {{ .Values.aws.rds.maxAllocatedStorage }}
+    username: postgres
+    passwordSecretRef:
+      name: airflow-db-creds
+      key: password
+    multiAz: {{ .Values.aws.rds.multiAZ }}
+    iops: {{ .Values.aws.rds.iops }}
+    storageThroughput: {{ .Values.aws.rds.storageThroughput }}
+    backupRetentionPeriod: {{ .Values.aws.rds.backupRetentionPeriod }}
+    skipFinalSnapshot: {{ .Values.aws.rds.skipFinalSnapshot }}
+---
 apiVersion: iam.services.k8s.aws/v1alpha1
 kind: Policy
 metadata:
