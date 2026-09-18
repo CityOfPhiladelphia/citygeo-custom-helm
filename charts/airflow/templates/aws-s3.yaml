@@ -1,6 +1,6 @@
 ---
 apiVersion: citygeo.phila.city/v1alpha1
-kind: XPrivateS3Bucket
+kind: PrivateS3Bucket
 metadata:
   name: phl-{{ .Values.innerHelm.releaseName }}-logs-{{ .Values.clusterName }}
 spec:
@@ -10,7 +10,7 @@ spec:
     forceDestroy: {{ .Values.aws.s3.forceDelete }}
 ---
 apiVersion: citygeo.phila.city/v1alpha1
-kind: XPrivateS3Bucket
+kind: PrivateS3Bucket
 metadata:
   name: phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}
 spec:

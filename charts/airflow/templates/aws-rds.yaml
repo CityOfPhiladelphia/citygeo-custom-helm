@@ -1,6 +1,6 @@
 ---
 apiVersion: citygeo.phila.city/v1alpha1
-kind: XPostgresRdsDb
+kind: PostgresRdsDb
 metadata:
   name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
 spec:
