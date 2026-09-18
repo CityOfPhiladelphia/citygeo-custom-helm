@@ -10,7 +10,6 @@ spec:
   forProvider:
     description: Valkey Cluster for Airflow Celery Workers
     nodeType: cache.t4g.micro
-    engine: valkey
     engineVersion: "{{ .Values.aws.elasticache.engineVersion }}"
     multiAzEnabled: {{ .Values.aws.elasticache.multiAZEnabled }}
     numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
