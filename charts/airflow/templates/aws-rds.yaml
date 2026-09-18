@@ -21,3 +21,5 @@ spec:
     storageThroughput: {{ .Values.aws.rds.storageThroughput }}
     backupRetentionPeriod: {{ .Values.aws.rds.backupRetentionPeriod }}
     skipFinalSnapshot: {{ .Values.aws.rds.skipFinalSnapshot }}
+  writeConnectionSecretToRef:
+    name: crossplane-{{ .Values.innerHelm.releaseName }}-rds

@@ -17,3 +17,5 @@ spec:
     authTokenSecretRef:
       name: airflow-valkey-creds
       key: password
+  writeConnectionSecretToRef:
+    name: crossplane-{{ .Values.innerHelm.releaseName }}-valkey
