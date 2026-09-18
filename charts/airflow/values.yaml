@@ -79,6 +79,7 @@ aws:
   clusterOIDCUrl: ~
   iam:
     managementPolicies: ["*"]
+    forceDetachPolicies: false
     import: false
   s3:
     managementPolicies: ["*"]
