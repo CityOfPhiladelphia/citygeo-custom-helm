@@ -15,8 +15,8 @@ spec:
   interval: {{ .Values.innerHelm.interval }}
   chart:
     spec:
-      # Chart version is overwritten in overlay
       chart: airflow
+      version: 1.22.0
       sourceRef:
         kind: HelmRepository
         name: airflow
