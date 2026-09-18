@@ -60,10 +60,7 @@ pgbouncer:
   resources: {}
 aws:
   adoptAckResources: false
-  accountId: ~
   region: us-east-1
-  kmsKeyId: ~
-  kmsKeyArn: ~
   kmsPolicyArn: ~
   elasticache:
     # Do not allow deleting Elasticache
@@ -73,8 +70,6 @@ aws:
     multiAZEnabled: false
     numNodeGroups: 1
     replicasPerNodeGroup: 0
-  clusterOIDCArn: ~
-  clusterOIDCUrl: ~
   iam:
     managementPolicies: ["*"]
     forceDetachPolicies: false
