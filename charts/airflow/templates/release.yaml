@@ -320,10 +320,10 @@ spec:
         worker_concurrency: {{ .Values.airflow.celery.concurrency }}
       logging:
         remote_logging: true
-        remote_base_log_folder: "s3://phl-{{ .Release.Name }}-logs-{{ .Values.clusterName }}"
+        remote_base_log_folder: "s3://phl-{{ .Values.innerHelm.releaseName }}-logs-{{ .Values.clusterName }}"
       common.io:
         # Sets up S3 object storage xcom backend
-        xcom_objectstorage_path: "s3://phl-{{ .Release.Name }}-xcom-{{ .Values.clusterName }}/backend"
+        xcom_objectstorage_path: "s3://phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}/backend"
         # Only store in bucket if xcom is bigger than 100Kb
         xcom_objectstorage_threshold: "102400"
         xcom_objectstorage_compression: gzip
