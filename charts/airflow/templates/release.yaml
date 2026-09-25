@@ -113,23 +113,8 @@ spec:
         serviceAccount:
           create: false
           name: "{{ .Values.innerHelm.releaseName }}-irsa"
-        logGroomerSidecar:
-          enabled: true
-          # Number of days to retain logs
-          retentionDays: 15
-          # frequency to attempt to groom logs, in minutes
-          frequencyMinutes: 15
-          resources:
-            limits:
-              memory: 192Mi
-              # Though I'm usually opposed to CPU limits, the log groomer
-              # seems to eat up a lot of CPU when it grooms. Setting a cpu
-              # limit just means it will do it more gracefully over time,
-              # which seems fine.
-              cpu: 100m
-            requests:
-              cpu: 10m
-              memory: 192Mi
+      logGroomerSidecar:
+        enabled: false
     scheduler:
       replicas: {{ .Values.airflow.scheduler.replicas }}
       resources:
@@ -150,18 +135,7 @@ spec:
           topologyKey: topology.kubernetes.io/zone
           whenUnsatisfiable: DoNotSchedule
       logGroomerSidecar:
-        enabled: true
-        # Number of days to retain logs
-        retentionDays: 15
-        # frequency to attempt to groom logs, in minutes
-        frequencyMinutes: 15
-        resources:
-          limits:
-            memory: 192Mi
-            cpu: 100m
-          requests:
-            cpu: 10m
-            memory: 192Mi
+        enabled: false
     apiServer:
       replicas: {{ .Values.airflow.apiServer.replicas }}
       resources:
@@ -216,16 +190,7 @@ spec:
           topologyKey: topology.kubernetes.io/zone
           whenUnsatisfiable: DoNotSchedule
       logGroomerSidecar:
-        enabled: true
-        retentionDays: 15
-        frequencyMinutes: 15
-        resources:
-          limits:
-            cpu: 100m
-            memory: 192Mi
-          requests:
-            cpu: 10m
-            memory: 192Mi
+        enabled: false
     dagProcessor:
       replicas: {{ .Values.airflow.dagProcessor.replicas }}
       resources:
@@ -246,16 +211,7 @@ spec:
           topologyKey: topology.kubernetes.io/zone
           whenUnsatisfiable: DoNotSchedule
       logGroomerSidecar:
-        enabled: true
-        retentionDays: 15
-        frequencyMinutes: 15
-        resources:
-          limits:
-            cpu: 100m
-            memory: 192Mi
-          requests:
-            cpu: 10m
-            memory: 192Mi
+        enabled: false
     # https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html#clean
     databaseCleanup:
       enabled: true
@@ -339,9 +295,9 @@ spec:
         sql_alchemy_max_overflow: 25
     logs:
       persistence:
-        enabled: true
-        size: 10Gi
-        storageClassName: efs-sc
+        enabled: false
+        # size: 10Gi
+        # storageClassName: efs-sc
     redis:
       enabled: false
     dags:
