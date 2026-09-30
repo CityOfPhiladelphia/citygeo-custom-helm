@@ -38,6 +38,7 @@ airflow:
       value: us-east-1
   auth:
     adminUsername: admin
+  instanceName: airflow
   celery:
     replicas: 2
     resources: {}

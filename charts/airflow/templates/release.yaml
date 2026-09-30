@@ -252,7 +252,7 @@ spec:
     config:
       api:
         expose_config: "True"
-        instance_name: "DagNabbit"
+        instance_name: "{{ .Values.airflow.instanceName }}"
         base_url: "https://{{ .Values.dnsName }}"
       # https://airflow.apache.org/docs/apache-airflow/stable/configurations-ref.html
       core:
