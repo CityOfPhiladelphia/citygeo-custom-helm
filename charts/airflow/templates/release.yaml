@@ -113,6 +113,13 @@ spec:
         serviceAccount:
           create: false
           name: "{{ .Values.innerHelm.releaseName }}-irsa"
+        extraVolumeMounts:
+          - name: venvs
+            mountPath: /home/airflow/venvs # Mount path inside the container
+        extraVolumes: 
+         - name: venvs
+           persistentVolumeClaim:
+              claimName: {{ .Values.innerHelm.releaseName }}-venvs
       logGroomerSidecar:
         enabled: false
     scheduler:
