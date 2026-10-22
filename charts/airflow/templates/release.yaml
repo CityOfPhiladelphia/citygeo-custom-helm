@@ -22,10 +22,18 @@ spec:
         name: airflow
         namespace: flux-system
   install:
+    {{- with .Values.innerHelm.install.strategy }}
+    strategy:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     remediation:
       retries: {{ .Values.innerHelm.install.retries }}
   upgrade:
     force: true
+    {{- with .Values.innerHelm.upgrade.strategy }}
+    strategy:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     remediation:
       retries: {{ .Values.innerHelm.upgrade.retries }}
   # https://artifacthub.io/packages/helm/apache-airflow/airflow?modal=values
