@@ -24,15 +24,21 @@ innerHelm:
   releaseName: airflow
   timeout: 30m
   interval: 30m
-  # strategy sets the HelmRelease install/upgrade strategy, for example
-  # {name: RetryOnFailure, retryInterval: 5m} to keep retrying instead of
-  # remediating. Unset, Flux uses RemediateOnFailure with the retries below.
+  # Airflow often reports a failed install or upgrade that succeeds once its
+  # pods settle, so by default Flux retries every retryInterval instead of
+  # uninstalling or rolling back. Set strategy to
+  # {name: RemediateOnFailure, retryInterval: null} to use the remediation
+  # retries instead.
   install:
     retries: 1
-    strategy: {}
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
   upgrade:
     retries: 1
-    strategy: {}
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
 airflow:
   image:
     repository: ~
