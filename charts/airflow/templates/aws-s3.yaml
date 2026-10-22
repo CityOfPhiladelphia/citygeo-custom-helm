@@ -1,0 +1,22 @@
+---
+apiVersion: citygeo.phila.city/v1alpha1
+kind: PrivateS3Bucket
+metadata:
+  name: phl-{{ .Values.innerHelm.releaseName }}-logs-{{ .Values.clusterName }}
+spec:
+  managementPolicies:
+    {{- toYaml .Values.aws.s3.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.s3.import }}
+  forProvider:
+    forceDestroy: {{ .Values.aws.s3.forceDelete }}
+---
+apiVersion: citygeo.phila.city/v1alpha1
+kind: PrivateS3Bucket
+metadata:
+  name: phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}
+spec:
+  managementPolicies:
+    {{- toYaml .Values.aws.s3.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.s3.import }}
+  forProvider:
+    forceDestroy: {{ .Values.aws.s3.forceDelete }}

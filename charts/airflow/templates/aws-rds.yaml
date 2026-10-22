@@ -1,0 +1,26 @@
+---
+apiVersion: citygeo.phila.city/v1alpha1
+kind: PostgresRdsDb
+metadata:
+  name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.clusterName }}"
+spec:
+  managementPolicies:
+    {{- toYaml .Values.aws.rds.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.rds.import }}
+  forProvider:
+    engineVersion: "{{ .Values.aws.rds.engineVersion }}"
+    instanceClass: db.t4g.small
+    deletionProtection: {{ .Values.aws.rds.deletionProtection }}
+    allocatedStorage: 20
+    maxAllocatedStorage: {{ .Values.aws.rds.maxAllocatedStorage }}
+    username: postgres
+    passwordSecretRef:
+      name: airflow-db-creds
+      key: password
+    multiAz: {{ .Values.aws.rds.multiAZ }}
+    iops: {{ .Values.aws.rds.iops }}
+    storageThroughput: {{ .Values.aws.rds.storageThroughput }}
+    backupRetentionPeriod: {{ .Values.aws.rds.backupRetentionPeriod }}
+    skipFinalSnapshot: {{ .Values.aws.rds.skipFinalSnapshot }}
+  writeConnectionSecretToRef:
+    name: crossplane-{{ .Values.innerHelm.releaseName }}-rds

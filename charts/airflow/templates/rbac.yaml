@@ -1,0 +1,27 @@
+# Apply a role to our {{ .Release.Name }}-worker-sa that is able to launch/modify pods
+# so that we can use the kubernetes_cmd operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-worker-custom-pod-launcher
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "pods/status", "pods/exec"]
+    verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}-worker-custom-pod-launcher-binding
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-worker-sa
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ .Release.Name }}-worker-custom-pod-launcher
+  apiGroup: rbac.authorization.k8s.io

@@ -1,1 +1,95 @@
-dagGitBranch: main
+dags:
+  repo: ~
+  branch: ~
+envName: ~
+clusterName: ~
+dnsName: ~
+ackOutputsNamespace: ~
+k8sSecretStore:
+  kind: ClusterSecretStore
+  name: ~
+secrets:
+  valkeyPasswordSecretName: airflow-valkey-creds
+  dbPasswordSecretName: airflow-db-creds
+  adminPasswordSecretName: airflow-admin-login
+  githubAppSecretName: ~
+  githubAppPrivateKeySecretKey: ~
+  githubAppInstallIdSecretKey: ~
+  githubAppClientIdSecretKey: ~
+  connectionsSecretName: airflow-connections
+# Helm options for the inner helm release
+innerHelm:
+  # Release name for the inner helm chart, must be different
+  # from the release name of this outer helm chart
+  releaseName: airflow
+  timeout: 30m
+  interval: 30m
+  install:
+    retries: 1
+  upgrade:
+    retries: 1
+airflow:
+  image:
+    repository: ~
+    digest: ~
+    tag: ~
+  env:
+    - name: AWS_REGION
+      value: us-east-1
+  auth:
+    adminUsername: admin
+  instanceName: airflow
+  celery:
+    replicas: 2
+    resources: {}
+    terminationGracePeriodSeconds: 2700
+    concurrency: 2
+    nodeSelectorExtra: ~
+    env: []
+  apiServer:
+    replicas: 2
+    resources: {}
+  scheduler:
+    replicas: 1
+    resources: {}
+  triggerer:
+    replicas: 1
+    resources: {}
+  dagProcessor:
+    replicas: 1
+    resources: {}
+pgbouncer:
+  replicas: 1
+  resources: {}
+aws:
+  region: us-east-1
+  kmsPolicyArn: ~
+  elasticache:
+    # Do not allow deleting Elasticache
+    managementPolicies: ["Create", "LateInitialize", "Observe", "Update"]
+    engineVersion: "9.0"
+    import: false
+    multiAZEnabled: false
+    numNodeGroups: 1
+    replicasPerNodeGroup: 0
+  iam:
+    managementPolicies: ["*"]
+    forceDetachPolicies: false
+    import: false
+  s3:
+    managementPolicies: ["*"]
+    # Set to true to allow a bucket with files to be deleted
+    forceDelete: false
+    import: false
+  rds:
+    # Do not allow deleting the RDS
+    managementPolicies: ["Create", "LateInitialize", "Observe", "Update"]
+    deletionProtection: true
+    import: false
+    engineVersion: ~
+    maxAllocatedStorage: 40
+    multiAZ: false
+    backupRetentionPeriod: 0
+    skipFinalSnapshot: true
+    iops: ~
+    storageThroughput: ~

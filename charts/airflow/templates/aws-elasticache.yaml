@@ -1,40 +1,21 @@
 ---
-apiVersion: elasticache.services.k8s.aws/v1alpha1
-kind: ReplicationGroup
+apiVersion: citygeo.phila.city/v1alpha1
+kind: ValkeyCache
 metadata:
-  name: {{ .Release.Name }}-valkey
-  # annotations:
-  #   services.k8s.aws/adoption-policy: "adopt-or-create"
-  #   services.k8s.aws/adoption-fields: |
-  #     {"replicationGroupID": "{{ .name }}-${env_name}"}
+  name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.envName }}"
 spec:
-  replicationGroupID: "{{ .Release.Name }}-${env_name}"
-  description: Valkey Cluster for Airflow Celery Workers
-  cacheNodeType: cache.t4g.micro
-  kmsKeyID: "${kms_id}"
-  engine: valkey
-  engineVersion: "9.0"
-  securityGroupIDs:
-    - "${elasticache_sg_id}"
-  cacheSubnetGroupName: "${elasticache_subnet_group}"
-  transitEncryptionEnabled: true
-  atRestEncryptionEnabled: true
-  authToken:
-    name: airflow-valkey-creds
-    key: password
----
-apiVersion: services.k8s.aws/v1alpha1
-kind: FieldExport
-metadata:
-  name: {{ .Release.Name }}-valkey
-spec:
-  from:
-    path: ".status.nodeGroups[0].primaryEndpoint"
-    resource:
-      group: rds.services.k8s.aws
-      kind: DBInstance
-      name: openmetadata-postgres
-  to:
-    name: ack-outputs
-    namespace: flux-system
-    kind: secret
+  managementPolicies:
+    {{- toYaml .Values.aws.rds.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.rds.import }}
+  forProvider:
+    description: Valkey Cluster for Airflow Celery Workers
+    nodeType: cache.t4g.micro
+    engineVersion: "{{ .Values.aws.elasticache.engineVersion }}"
+    multiAzEnabled: {{ .Values.aws.elasticache.multiAZEnabled }}
+    numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
+    replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
+    authTokenSecretRef:
+      name: airflow-valkey-creds
+      key: password
+  writeConnectionSecretToRef:
+    name: crossplane-{{ .Values.innerHelm.releaseName }}-valkey
