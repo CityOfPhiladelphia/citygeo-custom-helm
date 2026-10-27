@@ -43,6 +43,9 @@ spec:
     # apiSecretKey, jwtSecret, webserverSecret?
     apiSecretKeySecretName: airflow-custom-api-secret
     jwtSecretName: airflow-custom-jwt-secret
+    {{- with .Values.secrets.fernetKeySecretName }}
+    fernetKeySecretName: {{ . }}
+    {{- end }}
     data:
       # not needed cause pgbouncer will be used instead.
       metadataSecretName: {{ .Release.Name }}-db
@@ -134,6 +137,10 @@ spec:
          - name: venvs
            persistentVolumeClaim:
               claimName: {{ .Values.innerHelm.releaseName }}-venvs
+        # Logs are shipped to S3 and deleted locally, so workers don't need
+        # a log volume. This also makes workers a Deployment, not a StatefulSet.
+        persistence:
+          enabled: false
       logGroomerSidecar:
         enabled: false
     scheduler:
@@ -194,11 +201,10 @@ spec:
         config:
           maxUnavailable: ~
           minAvailable: 1
+      # Logs are shipped to S3 and deleted locally, so the triggerer doesn't need
+      # a log volume. This also makes it a Deployment, not a StatefulSet.
       persistence:
-        # Enable persistent volumes
-        enabled: true
-        size: 8Gi
-        storageClassName: ebs-sc
+        enabled: false
       nodeSelector:
         # Airflow is x86/amd64 only
         kubernetes.io/arch: amd64
@@ -298,6 +304,9 @@ spec:
       logging:
         remote_logging: true
         remote_base_log_folder: "s3://phl-{{ .Values.innerHelm.releaseName }}-logs-{{ .Values.clusterName }}"
+        # Logs are kept in S3, so remove the local copy once uploaded.
+        # Otherwise worker log volumes fill up, since log groomers are disabled.
+        delete_local_logs: "True"
       common.io:
         # Sets up S3 object storage xcom backend
         xcom_objectstorage_path: "s3://phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}/backend"
