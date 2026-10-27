@@ -1,0 +1,40 @@
+{{- if .Values.airflow.statsd.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-statsd
+spec:
+  selector:
+    matchLabels:
+      component: statsd
+      release: {{ .Values.innerHelm.releaseName }}
+  endpoints:
+    - port: statsd-scrape
+      scheme: http
+      tlsConfig:
+        insecureSkipVerify: true
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: "up|scrape_.*|airflow_executor_.*|airflow_pool_.*|airflow_scheduler_.*"
+          action: keep
+{{- end }}
+{{- if .Values.pgbouncer.podMonitor.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ .Release.Name }}-pgbouncer
+spec:
+  selector:
+    matchLabels:
+      component: pgbouncer
+      release: {{ .Values.innerHelm.releaseName }}
+  podMetricsEndpoints:
+    - port: metrics
+      metricRelabelings:
+        # nothing too interesting, just track active and waiting clients
+        - sourceLabels: [__name__]
+          regex: "pgbouncer_exporter_pools_active_clients|pgbouncer_exporter_pools_waiting_clients|pgbouncer_exporter_database_current_connections|pgbouncer_exporter_database_max_connections|pgbouncer_exporter_database_pool_size"
+          action: keep
+{{- end }}

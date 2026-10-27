@@ -69,7 +69,8 @@ airflow:
     replicas: 1
     resources: {}
   statsd:
-    # Statsd metrics have high cardinality, so they are off by default
+    # Statsd metrics have high cardinality, so they are off by default.
+    # Enabling statsd also creates a ServiceMonitor for it.
     enabled: false
     resources: {}
     cache: {}
@@ -83,6 +84,9 @@ pgbouncer:
       maxUnavailable: 1
   metricsExporterSidecar:
     resources: {}
+  # Scrape a few pool/connection metrics from the pgbouncer exporter sidecar
+  podMonitor:
+    enabled: false
 aws:
   region: us-east-1
   kmsPolicyArn: ~
