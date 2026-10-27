@@ -201,11 +201,10 @@ spec:
         config:
           maxUnavailable: ~
           minAvailable: 1
+      # Logs are shipped to S3 and deleted locally, so the triggerer doesn't need
+      # a log volume. This also makes it a Deployment, not a StatefulSet.
       persistence:
-        # Enable persistent volumes
-        enabled: true
-        size: 8Gi
-        storageClassName: ebs-sc
+        enabled: false
       nodeSelector:
         # Airflow is x86/amd64 only
         kubernetes.io/arch: amd64
