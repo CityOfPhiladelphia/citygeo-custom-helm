@@ -1,4 +1,4 @@
-# Apply a role to our {{ .Release.Name }}-worker-sa that is able to launch/modify pods
+# Apply a role to the celery workers' service account that is able to launch/modify pods
 # so that we can use the kubernetes_cmd operator
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -19,7 +19,8 @@ metadata:
   name: {{ .Release.Name }}-worker-custom-pod-launcher-binding
 subjects:
   - kind: ServiceAccount
-    name: {{ .Release.Name }}-worker-sa
+    # Celery workers run as the IRSA service account (see release.yaml)
+    name: "{{ .Values.innerHelm.releaseName }}-irsa"
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role

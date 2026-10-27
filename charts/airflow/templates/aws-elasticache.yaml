@@ -5,8 +5,8 @@ metadata:
   name: "{{ .Values.innerHelm.releaseName }}-{{ .Values.envName }}"
 spec:
   managementPolicies:
-    {{- toYaml .Values.aws.rds.managementPolicies | nindent 4 }}
-  import: {{ .Values.aws.rds.import }}
+    {{- toYaml .Values.aws.elasticache.managementPolicies | nindent 4 }}
+  import: {{ .Values.aws.elasticache.import }}
   forProvider:
     description: Valkey Cluster for Airflow Celery Workers
     nodeType: cache.t4g.micro
@@ -15,7 +15,7 @@ spec:
     numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
     replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
     authTokenSecretRef:
-      name: airflow-valkey-creds
+      name: {{ .Values.secrets.valkeyPasswordSecretName }}
       key: password
   writeConnectionSecretToRef:
     name: crossplane-{{ .Values.innerHelm.releaseName }}-valkey

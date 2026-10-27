@@ -9,13 +9,13 @@ spec:
   import: {{ .Values.aws.rds.import }}
   forProvider:
     engineVersion: "{{ .Values.aws.rds.engineVersion }}"
-    instanceClass: db.t4g.small
+    instanceClass: {{ .Values.aws.rds.instanceClass }}
     deletionProtection: {{ .Values.aws.rds.deletionProtection }}
-    allocatedStorage: 20
+    allocatedStorage: {{ .Values.aws.rds.allocatedStorage }}
     maxAllocatedStorage: {{ .Values.aws.rds.maxAllocatedStorage }}
     username: postgres
     passwordSecretRef:
-      name: airflow-db-creds
+      name: {{ .Values.secrets.dbPasswordSecretName }}
       key: password
     multiAz: {{ .Values.aws.rds.multiAZ }}
     iops: {{ .Values.aws.rds.iops }}
