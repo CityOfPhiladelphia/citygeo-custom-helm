@@ -284,6 +284,10 @@ spec:
       # https://airflow.apache.org/docs/apache-airflow/stable/configurations-ref.html
       core:
         default_timezone: "America/New_York"
+        # Workers and the triggerer are Deployments (no persistence), so their pod
+        # hostnames don't resolve in DNS. Record the pod IP instead, so the api
+        # server can fetch logs of running tasks from the worker's log server.
+        hostname_callable: airflow.utils.net.get_host_ip_address
         dagbag_import_timeout: 90.0
         # max_active_tasks_per_dag: 20
         # max_active_runs_per_dag: 20
