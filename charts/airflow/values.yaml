@@ -58,7 +58,6 @@ airflow:
     resources: {}
     terminationGracePeriodSeconds: 2700
     concurrency: 2
-    nodeSelectorExtra: ~
     env: []
   apiServer:
     replicas: 2
@@ -77,15 +76,23 @@ airflow:
     # Enabling statsd also creates a ServiceMonitor for it.
     enabled: false
     resources: {}
-    cache: {}
+  # Deep-merged over the values this chart generates for the inner Airflow chart
+  # (https://artifacthub.io/packages/helm/apache-airflow/airflow?modal=values),
+  # for settings that aren't exposed above. Maps merge key by key; lists replace
+  # the generated list entirely. For example:
+  #   extraValues:
+  #     workers:
+  #       celery:
+  #         # Added to the chart's own nodeSelector (amd64, on-demand)
+  #         nodeSelector:
+  #           topology.kubernetes.io/zone: us-east-1a
+  #     config:
+  #       dag_processor:
+  #         file_parsing_sort_mode: random_seeded_by_host
+  extraValues: {}
 pgbouncer:
   replicas: 1
   resources: {}
-  nodeSelector: {}
-  podDisruptionBudget:
-    enabled: false
-    config:
-      maxUnavailable: 1
   metricsExporterSidecar:
     resources: {}
   # Scrape a few pool/connection metrics from the pgbouncer exporter sidecar
