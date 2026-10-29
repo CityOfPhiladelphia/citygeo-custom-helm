@@ -38,6 +38,17 @@ spec:
       retries: {{ .Values.innerHelm.upgrade.retries }}
   # https://artifacthub.io/packages/helm/apache-airflow/airflow?modal=values
   values:
+    {{- $values := include "airflow.innerValues" . | fromYaml }}
+    {{- if hasKey $values "Error" }}
+      {{- fail (printf "airflow.innerValues is not valid YAML: %s" $values.Error) }}
+    {{- end }}
+    {{- toYaml (mergeOverwrite $values .Values.airflow.extraValues) | nindent 4 }}
+
+{{- /*
+Values for the inner Airflow chart. airflow.extraValues is deep-merged over
+these above, so anything not exposed as its own value can still be set.
+*/}}
+{{- define "airflow.innerValues" }}
     executor: CeleryExecutor
     allowPodLaunching: true
     # apiSecretKey, jwtSecret, webserverSecret?
@@ -66,10 +77,6 @@ spec:
       replicas: {{ .Values.pgbouncer.replicas }}
       resources:
         {{- toYaml .Values.pgbouncer.resources | nindent 8 }}
-      nodeSelector:
-        {{- toYaml .Values.pgbouncer.nodeSelector | nindent 8 }}
-      podDisruptionBudget:
-        {{- toYaml .Values.pgbouncer.podDisruptionBudget | nindent 8 }}
       #maxClientConn: 230
       metadataPoolSize: 100
       resultBackendPoolSize: 30
@@ -121,10 +128,6 @@ spec:
           kubernetes.io/arch: amd64
           # Celery workers in must be on-demand
           karpenter.sh/capacity-type: on-demand
-          # to reduce data transfer costs writing to databridge
-          {{- if .Values.airflow.celery.nodeSelectorExtra }}
-            {{- toYaml .Values.airflow.celery.nodeSelectorExtra | nindent 10 }}
-          {{- end }}
         env:
           {{- toYaml .Values.airflow.celery.env | nindent 10 }}
         serviceAccount:
@@ -377,8 +380,6 @@ spec:
       enabled: {{ .Values.airflow.statsd.enabled }}
       resources:
         {{- toYaml .Values.airflow.statsd.resources | nindent 8 }}
-      cache:
-        {{- toYaml .Values.airflow.statsd.cache | nindent 8 }}
     # https://airflow.apache.org/docs/helm-chart/1.18.0/#installing-the-chart-with-argo-cd-flux-rancher-or-terraform
     createUserJob:
       # Don't allow Karpenter to kill jobs prematurely
@@ -407,3 +408,4 @@ spec:
         kubernetes.io/arch: amd64
       useHelmHooks: false
       applyCustomEnv: false
+{{- end }}
