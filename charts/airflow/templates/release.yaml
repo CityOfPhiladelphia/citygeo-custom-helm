@@ -317,8 +317,8 @@ these above, so anything not exposed as its own value can still be set.
       common.io:
         # Sets up S3 object storage xcom backend
         xcom_objectstorage_path: "s3://phl-{{ .Values.innerHelm.releaseName }}-xcom-{{ .Values.clusterName }}/backend"
-        # Only store in bucket if xcom is bigger than 100Kb
-        xcom_objectstorage_threshold: "102400"
+        # Only store in bucket if xcom is bigger than 10Kb
+        xcom_objectstorage_threshold: "10240"
         xcom_objectstorage_compression: gzip
       dag_processor:
         # We have to hit re-parse or trigger a re-parse via github
