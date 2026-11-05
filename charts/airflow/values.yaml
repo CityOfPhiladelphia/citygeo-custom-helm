@@ -117,6 +117,10 @@ aws:
     managementPolicies: ["*"]
     forceDetachPolicies: false
     import: false
+    # Names of other S3 buckets the Airflow IRSA role can read and write, on
+    # top of the xcom and logs buckets this chart creates. Each one grants the
+    # bucket and all of its objects
+    extraS3Buckets: []
   s3:
     managementPolicies: ["*"]
     # Set to true to allow a bucket with files to be deleted
