@@ -133,17 +133,56 @@ these above, so anything not exposed as its own value can still be set.
         serviceAccount:
           create: false
           name: "{{ .Values.innerHelm.releaseName }}-irsa"
+        # Each worker caches @task.virtualenv venvs on its own disk, which keeps them
+        # across pod restarts. Turning on persistence makes workers a StatefulSet, and
+        # the Airflow chart always adds a "logs" disk to it. Logs are shipped to S3 and
+        # deleted locally, so that disk stays nearly empty.
+        # https://airflow.apache.org/docs/helm-chart/stable/parameters-ref.html#workers
+        # Disk sizes can't be changed on an existing StatefulSet, see values.yaml
+        persistence:
+          enabled: true
+          size: {{ .Values.airflow.celery.logsVolumeSize }}
+          storageClassName: {{ .Values.airflow.celery.storageClassName }}
+          # Delete a worker's disks when it's scaled away or the release is removed,
+          # so they don't pile up (for example from app-preview environments)
+          persistentVolumeClaimRetentionPolicy:
+            whenDeleted: Delete
+            whenScaled: Delete
+        volumeClaimTemplates:
+          - metadata:
+              name: venvs
+            spec:
+              storageClassName: {{ .Values.airflow.celery.storageClassName }}
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: {{ .Values.airflow.celery.venvsVolumeSize }}
         extraVolumeMounts:
           - name: venvs
-            mountPath: /home/airflow/venvs # Mount path inside the container
-        extraVolumes: 
-         - name: venvs
-           persistentVolumeClaim:
-              claimName: {{ .Values.innerHelm.releaseName }}-venvs
-        # Logs are shipped to S3 and deleted locally, so workers don't need
-        # a log volume. This also makes workers a Deployment, not a StatefulSet.
-        persistence:
-          enabled: false
+            mountPath: /home/airflow/venvs
+        # Airflow never removes old cached venvs ("no automated cleanup is made"):
+        # https://airflow.apache.org/docs/apache-airflow-providers-standard/stable/operators/python.html
+        # Every requirements change makes a new <venv_cache_path>/venv-<hash> folder, so
+        # before the worker starts (when no task can be using them), delete venvs built
+        # more than venvMaxAgeDays ago. Ones still in use are rebuilt on their next run.
+        extraInitContainers:
+          - name: clean-old-venvs
+            {{- $image := .Values.airflow.image }}
+            image: "{{ required "airflow.image.repository is required" $image.repository }}{{ if $image.digest }}@{{ $image.digest }}{{ else }}:{{ required "airflow.image.tag or airflow.image.digest is required" $image.tag }}{{ end }}"
+            command:
+              - bash
+              - -c
+              - find /home/airflow/venvs -mindepth 2 -maxdepth 2 -type d -name 'venv-*' -mtime +{{ int .Values.airflow.celery.venvMaxAgeDays }} -print -exec rm -rf {} +
+            volumeMounts:
+              - name: venvs
+                mountPath: /home/airflow/venvs
+            resources:
+              limits:
+                memory: 64Mi
+              requests:
+                cpu: 10m
+                memory: 64Mi
       logGroomerSidecar:
         enabled: false
     scheduler:
