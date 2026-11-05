@@ -59,6 +59,17 @@ airflow:
     terminationGracePeriodSeconds: 2700
     concurrency: 2
     env: []
+    # Each worker gets its own disks for cached venvs and logs. These sizes can't be
+    # changed on an existing worker StatefulSet: the upgrade fails until the
+    # StatefulSet is deleted (with --cascade=orphan) and recreated
+    storageClassName: ebs-sc
+    # Cached @task.virtualenv venvs, mounted at /home/airflow/venvs
+    venvsVolumeSize: 5Gi
+    # When a worker starts, delete cached venvs built more than this many days ago.
+    # Airflow never cleans them up itself, and venvs still in use are rebuilt on next run
+    venvMaxAgeDays: 30
+    # Logs are shipped to S3 and deleted locally, so this stays nearly empty
+    logsVolumeSize: 1Gi
   apiServer:
     replicas: 2
     resources: {}
