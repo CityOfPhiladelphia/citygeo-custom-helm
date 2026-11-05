@@ -24,7 +24,9 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: {{ .Release.Name }}-pgbouncer
+  # Named after the inner release, since the PodMonitor name becomes the
+  # job label (<namespace>/<name>) on the scraped metrics
+  name: {{ .Values.innerHelm.releaseName }}-pgbouncer
 spec:
   selector:
     matchLabels:
