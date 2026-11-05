@@ -109,6 +109,10 @@ aws:
     multiAZEnabled: false
     numNodeGroups: 1
     replicasPerNodeGroup: 0
+    # Leave unset to use the cluster's shared ElastiCache subnet group. Only
+    # set this for a cache that was created in a different subnet group, since
+    # the subnet group of an existing cache can't be changed
+    subnetGroupName: ~
   iam:
     managementPolicies: ["*"]
     forceDetachPolicies: false
