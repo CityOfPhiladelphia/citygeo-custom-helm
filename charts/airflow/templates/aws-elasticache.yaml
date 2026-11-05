@@ -14,6 +14,9 @@ spec:
     multiAzEnabled: {{ .Values.aws.elasticache.multiAZEnabled }}
     numNodeGroups: {{ .Values.aws.elasticache.numNodeGroups }}
     replicasPerNodeGroup: {{ .Values.aws.elasticache.replicasPerNodeGroup }}
+    {{- with .Values.aws.elasticache.subnetGroupName }}
+    subnetGroupName: {{ . }}
+    {{- end }}
     authTokenSecretRef:
       name: {{ .Values.secrets.valkeyPasswordSecretName }}
       key: password
